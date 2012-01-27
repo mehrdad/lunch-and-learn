@@ -1,0 +1,7 @@
+body{width:99%;background:white;color:#333}
+.slides{background:none;border:none;margin-top:0;box-shadow:none}
+.slides article{display:block;border-top:none}
+h1,h2,h3{color:black}
+li:before{position:relative}
+q::before,q::after{color:#999;position:relative}
+a{color:blue}
