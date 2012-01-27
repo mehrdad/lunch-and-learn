@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Dyn Lunch and Learn: D3.js</title>
+    <meta charset='utf-8'>
+    <meta name='apple-mobile-web-app-capable' content='yes'>
+    
+    <link rel="stylesheet" href="h5s/page.css" type="text/css" media='all' />
+    
+    <link rel="stylesheet" href="h5s/screen.css" type="text/css" media='screen' title="All at once" />
+    <link rel="alternate stylesheet" href="h5s/slides.css" type="text/css" media='screen' title="Slideshow" />
+    <link rel="alternate stylesheet" href="h5s/print.css" type="text/css" media='screen' title="Print Preview" />
+    
+    <link rel="stylesheet" href="h5s/print.css" type="text/css" media="print" />
+    <script src='h5s/slides.min.js' type='text/javascript'></script>
+    <script src='h5s/prettify.min.js' type='text/javascript'></script>
+    <script src='1202-d3js/d3.min.js' type='text/javascript'></script>
+    <script src='1202-d3js/example_loader.js' type='text/javascript'></script>
+  </head>
+  
+  <body>
+    <section class='slides layout-widescreen template-default'>
+      <article>
+        <h1>
+          D3.js
+        <h2>
+          Data and DOM Manipulations
+        </h2>
+        <div class='author'>
+          @alexsergeyev, February 2012
+        </div>
+      </article>
+
+      <article>
+        <h2 class='build'>
+          Data Driven Documents?
+          <span>YES!</span>
+        </h2>
+        <ul class='build'>
+        <li>fast, small (minimalisic core and extra modules)
+        <li>allows to template DOM element creation
+        <li>utilizes common idea "Find something in DOM and keep it in array"
+        <li>plays nicely with HTML5 and other tools (would also switch to Sizzle, if available)
+        <li>very well documented (<a href='http://mbostock.github.com/d3/api/'>mbostock.github.com/d3/api/</a>)
+        </ul>
+      </article>
+
+      <article id='example1'>
+        <h2>
+          Basic Example
+        </h2>
+        <pre></pre>
+        <script type='text/javascript'>
+          loadExample("example1", 1);
+        </script>
+        <div>
+        Your lucky numbers are:
+        <span class='demo'>
+        </span>
+        </div>
+      </article>
+
+      <article id='example2'>
+        <h2>
+          SVG in Action
+        </h2>
+        <pre></pre>
+        <script type='text/javascript'>
+          loadExample("example2", 4);
+        </script>
+        <div>
+        Your lucky numbers are:
+        <span class='demo'>
+        </span>
+        </div>
+        <div class='build' style='padding-top:1em'>
+        <dl>
+        <dd>Rule 1:<dt>Each new element inherits the data of the current elements.
+        <dd>Rule 2:<dt>You have to call text(...) again.<br>
+        <small>(for svg:path it would be attr('d',...), etc.)</small>
+        </dl>
+        </div>
+      </article>
+
+      <article>
+        <h2>
+          Comparing to jQuery, D3.js is...
+        </h2>
+        <ul>
+        <li>full of handy math utils, not just DOM operations
+        <li>half the size
+        <li>ignorant of pre-IE9 and other old browsers
+            <br/><small>(having Sizzle saves you some pain but SVG is not properly
+                 supported in those anyway)</small>
+        </ul>
+        <p class='build' style='margin-top:5em'>
+        <span>Read <a href='http://www.smarter.org/images/apples-vs-oranges.jpg' target='_new'>apples vs oranges</a> to find more things to compare.</span>
+        </p>
+      </article>
+
+      <article>
+        <h2>
+          Modules in D3.js
+        </h2>
+        <dl>
+        <dd>d3.layout.js</dd><dt>....</dt>
+        </dl>
+      </article>
+
+      <article>
+        <h2>
+          Few examples from D3.js developers:
+        </h2>
+        <ul>
+      </article>
+
+
+    </section>
+
+  </body>
+</html>
