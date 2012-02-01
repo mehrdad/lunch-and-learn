@@ -6,6 +6,22 @@ body {
   background:#222;
 }
 
+.show-once {
+  position: absolute;
+  top:0;
+  height:20px;
+  opacity:.3;
+  background:#000;
+  color: #CCC;
+  font-size:9px;
+  text-align:center;
+  vertical-align:middle;
+  line-height:20px;
+  left:300px;
+  right:300px;
+  margin:0 auto;
+}
+
 .slides {
   display: block;
 
@@ -26,7 +42,8 @@ body {
   
   
   min-height: 500px;
-  margin: 50px;
+  margin: 20px;
+  position:relative;
 }
 
 .slides > article {
@@ -38,12 +55,8 @@ body {
   font-size: 30px;
   line-height: 36px;
   letter-spacing: -1px;
+  word-spacing: 1px;
   page-break-before: always;
-}
-
-article small{
-  letter-spacing:0;
-  color:#DDD;
 }
 
 dd {
@@ -151,6 +164,19 @@ h3 {
   letter-spacing: -1px;
 }
 
+h4 {
+  font-size: 25px;
+  line-height: 26px;
+  color: #FFF;
+
+  margin: 0;
+  margin-top:.8em;
+  padding: 0;
+  font-weight: 600;
+
+  letter-spacing: -1px;
+}
+
 article.fill h3 {
   background: rgba(255, 255, 255, .75);
   padding-top: .2em;
@@ -166,10 +192,18 @@ ul {
   list-style: none;
   margin: 0;
   padding: 0;
-  color:#CCC;
-  margin-top: 40px;
+  margin-top: 20px;
 
   margin-left: .75em;
+}
+article.smaller h4 ~ ul{
+  margin-left: 4em;
+  margin-top: 0.2em;
+}
+
+article.smaller h4 ~ p{
+  margin-left: 4em;
+  margin-top: 0.2em;
 }
 ul:first-child {
   margin-top: 0;
@@ -184,7 +218,7 @@ li {
 ul li {
   margin-bottom: .5em;
 }
-ul li:before {
+ul > li:before {
   content: '–';
 
   width: 1.0em;
@@ -242,10 +276,6 @@ iframe {
 h3 + iframe {
   margin-top: 40px;
   height: 470px;
-}
-
-.demo {
-  background-color: #333;
 }
 
 

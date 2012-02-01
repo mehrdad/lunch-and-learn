@@ -4,4 +4,6 @@ body{width:99%;background:white;color:#333}
 h1,h2,h3{color:black}
 li:before{position:relative}
 q::before,q::after{color:#999;position:relative}
-a{color:blue}
+a,a:visited,a:hover{color:blue}
+.show-once{display:none}
+.yellow{color:#C90!important}

@@ -1,2 +1,8 @@
 article{display:block!important}
+article small{
+  letter-spacing:0;
+  color:#DDD;
+}
+
+
 

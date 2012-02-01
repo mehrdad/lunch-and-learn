@@ -5,7 +5,7 @@ demo.selectAll("span").data(data).enter()
     .append("span").attr("style", "margin:0 10px")
     .text(function(d) { return d; });
 
-demo.append("a").text("↺")
+demo.append("a").attr('href', location.href).text("↺")
 // OR demo.selectAll('a').data(['↺']).enter().append("a").text(String)
   .attr("style", "margin-left:1em")
   .on("click", function() {
@@ -13,6 +13,7 @@ demo.append("a").text("↺")
       data.forEach(function(d,i){
         data[i] = pool.splice(Math.floor(Math.random()*pool.length),1)
       });
-      demo.selectAll("span").data(data).text(function(d) { return d; }).sort()
+      demo.selectAll("span").data(data).text(function(d) { return d; }).sort();
+      return false;
     });
 // =end

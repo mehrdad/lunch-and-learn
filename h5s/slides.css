@@ -41,6 +41,7 @@ body {
 
   left: 50%;
   top: 50%;
+  background: black;
 
   margin-left: -450px;
   margin-top: -350px;
@@ -75,19 +76,48 @@ body {
   padding: 40px 160px;
 }
 
-.slides.template-default > article:not(.nobackground):not(.biglogo) {
-  background-image: url(../images/Dyn.svg), url(../images/rays.svg);
-  background-position: 800px 610px,-10px -10px;
-  background-repeat: no-repeat,no-repeat;
-  background-size: auto auto, 1200px 700px;
-  background-color: black;
+.show-once {
+  display:none
+}
+article small{
+  letter-spacing:0;
+  color:#DDD;
+}
+
+
+
+.slides.template-default > article:not(.nobackground):not(.biglogo):before {
+  background-image: url(../images/rays.svg);
+  background-position: 0 -8px;
+  content:"";
+  position:absolute;
+  z-index:-2;
+  top:0;
+  bottom:0;
+  left:0;
+  right:0;
+  background-size:100% 100%;
+  background-repeat: no-repeat;
+  opacity:0.25;
 } 
+
+.slides.template-default > article:not(.nobackground):not(.biglogo):after {
+  content:"";
+  position:absolute;
+  z-index:-1;
+  top:0;
+  bottom:0;
+  left:0;
+  right:0;
+  background-image: url(../images/Dyn.svg);
+  background-position: 800px 610px;
+  background-repeat: no-repeat;
+}
 
 /* Clickable/tappable areas */
 
 .slide-area {
   z-index: 1000;
-
   position: absolute;
   left: 0;
   top: 0;
