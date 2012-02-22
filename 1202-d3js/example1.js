@@ -1,6 +1,5 @@
 var data = d3.range(4);
 var demo = d3.selectAll("#example1 .demo");
-
 demo.selectAll("span").data(data).enter()
     .append("span").attr("style", "margin:0 10px")
     .text(function(d) { return d; });
@@ -14,6 +13,7 @@ demo.append("a").attr('href', location.href).text("↺")
         data[i] = pool.splice(Math.floor(Math.random()*pool.length),1)
       });
       demo.selectAll("span").data(data).text(function(d) { return d; }).sort();
-      return false;
+//      d3.event.stopPropagation();
+//      d3.event.preventDefault();
     });
 // =end

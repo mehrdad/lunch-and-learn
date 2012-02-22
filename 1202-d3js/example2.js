@@ -13,10 +13,10 @@ var v = demo.selectAll("span").data(data).enter()
     .attr("stroke-width", 1.5)
     .style("font", "22pt Comic Sans MS")
     .text(function(d) { return d; });
-// onclick:
-// demo.selectAll("text").data(data).text(function(d) { return d; }
+// onclick (see example2.js for more details):
+// demo.selectAll("text").data(data).text(function(d) { return d; };
 // =end
-demo.append("a").attr('href',location.href).text("↺")
+demo.append("a").attr('href', location.href).text("↺")
 // OR demo.selectAll('a').data(['↺']).enter().append("a").text(String)
   .attr("style", "margin-left:1em")
   .on("click", function() {
@@ -24,7 +24,10 @@ demo.append("a").attr('href',location.href).text("↺")
     data.forEach(function(d,i){
       data[i] = pool.splice(Math.floor(Math.random()*pool.length),1)
     });
-    demo.selectAll("text").data(data).text(function(d) { return d; })
+    demo.selectAll("text").data(data).text(function(d) { return d; }); 
+    // Can you do sort here as in example 1? :-)
+//    d3.event.stopPropagation();
+//    d3.event.preventDefault();
   });
   
 
