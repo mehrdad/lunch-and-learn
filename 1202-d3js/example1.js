@@ -13,7 +13,7 @@ demo.append("a").attr('href', location.href).text("↺")
         data[i] = pool.splice(Math.floor(Math.random()*pool.length),1)
       });
       demo.selectAll("span").data(data).text(function(d) { return d; }).sort();
-//      d3.event.stopPropagation();
-//      d3.event.preventDefault();
+      d3.event.stopPropagation();
+      d3.event.preventDefault();
     });
 // =end

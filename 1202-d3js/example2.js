@@ -26,8 +26,8 @@ demo.append("a").attr('href', location.href).text("↺")
     });
     demo.selectAll("text").data(data).text(function(d) { return d; }); 
     // Can you do sort here as in example 1? :-)
-//    d3.event.stopPropagation();
-//    d3.event.preventDefault();
+    d3.event.stopPropagation();
+    d3.event.preventDefault();
   });
   
 
