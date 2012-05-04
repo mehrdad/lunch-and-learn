@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Dyn Lunch and Learn: Using Git</title>
+    <title>Dyn Lunch and Learn: Using Git with SVN</title>
     <meta charset='utf-8'>
     <meta name='apple-mobile-web-app-capable' content='yes'>
 
@@ -25,133 +25,330 @@
     <section class='slides layout-widescreen template-default'>
       <article>
         <h1>
-          Using Git
+          Using Git with SVN
         </h1>
+      </article>
+      <article>
         <h2>
-          Why and how to use it?
+          Why use Git with SVN?
         </h2>
         <div class='author'>
-          ....
+            <p>
+                Get many of the benefits of Git without a major change to how everyone uses version control
+            </p>
+            <ul>
+                <li>Local repository - work without a network connection</li>
+                <li>Track and switch between branches easily</li>
+                <li>Local branches</li>
+                <li>Useful tools - git-log, git-bisect, git-stash, and more</li>
+            </ul>
         </div>
       </article>
 
       <article>
+        <h1>
+            But... our code's in SVN!
+        </h1>
+      </article>
+
+      <article>
         <h2>
-          Introduction
+          Bridging the gap
         </h2>
         <p>
-          Git is revision control system. You use one to make sure changes you do over time could be restored.
+          The 'git svn' command acts as a SVN client. It allows tracking remote SVN branches via local Git branches.
         </p>
         <p>
-          Git positions itself as distributed, decentralized RCS.
+          It pulls in logs, available branches, and allows using things like svn blame.
         </p>
         <p>
-          It stores all revision information in BLOBs optimized for fast operations.
-          Every working copy is effectively a fully functional fork of git
-          <abbr title='Direct Acyclic Graph'>DAG</abbr> structures and work
-          files extracted from them.
+          You can make commits, manage history and review changes locally before pushing them up to SVN while still having version control.
         </p>
       </article>
 
       <article>
         <h2>
-          &#147;Why do I need all this?!&nbsp;&nbsp;  How do I use it?&#148;
-        </h2>
-        TODO: add inserts to each option
-        <ul>
-        <li>Make sure git installed or install it
-        <li>Configure few options
-        <li>Create your repository
-        <li>Share your work
-        </ul>
-      </article>
-
-      <article>
-        <h2>
-         ...but directed graphs are so cool!
-        </h2>
-        <p>
-        <img src='1203-using_git/github-io-network-graph.png'/>
-        </p>
-        <ul>
-        <li>All branches and tags are just node labels.
-        <li>"Revision" is the product of previous state and applied diff.
-        </ul>
-        <p>
-        It makes merging process smarter and easier to execute! Git can also merge more than pair of branches at the same time.
-        </p>
-      </article>
-
-      <article>
-        <h2>
-          Let's do it! Creating Git Repository (step 1)
+            Getting started
         </h2>
 <pre>
-$ mkdir myrepo; cd myrepo
-$ git init .
-Initialized empty Git repository in ./.git/
-$ echo "Hello World" > test.txt
-$ git add test.txt
-$ git commit test.txt -m 'Adding a greeting'
-[master (root-commit) 4be30d5] Adding a greeting
- 1 files changed, 1 insertions(+), 0 deletions(-)
- create mode 100644 test.txt
+$ git svn clone svn+ssh://svn.corp.dyndns.com/svn/individual -r 22927:HEAD --stdlayout
+Initialized empty Git repository in /home/dmccombs/git/individual/.git/
+        A       individual/ctuininga/bdr_salesforce_tool/manage.py
+        A       individual/ctuininga/bdr_salesforce_tool/views.py
+        A       individual/ctuininga/bdr_salesforce_tool/__init__.py
+        A       individual/ctuininga/bdr_salesforce_tool/3rd_party/Django-1.3.1.tar.gz
+...
+Checked out HEAD:
+  svn+ssh://svn.corp.dyndns.com/svn/individual/trunk r22962
 </pre>
-      <p>Try it with "git status" after every line.</p>
-      <p>Try to repeat some git commands after you've already done them.</p>
+        <p><strong>Note:</strong> Make sure you specify -r with large repositories to avoid a long clone pulling down all history of the repository.
       </article>
 
       <article>
         <h2>
-          Let's do it! Branching and merging (step 2)
+            Tracking remote branches
+        </h2>
+        <p>
+            Cloning a repository will leave you with a single Git branch 'master' tracking 'trunk'.
+        </p>
+        <p>
+            You can list available remote svn branches with the command 'git branch -a' and then track them locally.
+        </p>
+<pre>
+(master)$ git branch -a
+* master
+  remotes/dans-test-branch
+  remotes/trunk
+(master)$ git checkout -b dans-local-test remotes/dans-test-branch
+Switched to a new branch 'dans-local-test'
+(dans-local-test)$ git branch
+* dans-local-test
+  master
+</pre>
+        <p>
+            You can then use 'git checkout' to switch between branches
+        </p>
+      </article>
+
+      <article>
+        <h2>
+          Updating from and committing to SVN
+        </h2>
+        <p>
+            git svn rebase
+            <ul>
+                <li>Think of this as 'svn up'</li>
+            </ul>
+        </p>
+        <p>
+            git svn fetch
+            <ul>
+                <li>Like rebase, but also fetches logs and will find new remote branches</li>
+            </ul>
+        </p>
+        <p>
+            git svn dcommit
+            <ul>
+                <li>Pushes local committed changes up to the SVN repository</li>
+            </ul>
+        </p>
+      </article>
+
+      <article>
+        <h2>
+          Workflow (Basic)
         </h2>
 <pre>
-$ git checkout -b patch
-Switched to a new branch 'patch'
-$ git branch -v
-  master 0ac2b99 Adding a greeting
-* patch  0ac2b99 Adding a greeting
-$ echo 'Git is cool' >> test.txt
-$ git commit -am 'Extending the greeting'
-[patch ab58480] Extending the greeting
- 1 files changed, 1 insertions(+), 0 deletions(-)
-$ git checkout master
-Switched to branch 'master'
-$ git branch -v
-* master 0ac2b99 Adding a greeting
-  patch  ab58480 Extending the greeting
-$ git merge patch
-Updating 0ac2b99..ab58480
+(dans-local-test)$ echo 'stuff' > newfile.txt
+(dans-local-test)⚡$ git add newfile.txt
+(dans-local-test)⚡$ git commit -m "Adding a new file."
+[dans-local-test 0b8f8ac] Adding a new file.
+ 1 file changed, 1 insertion(+)
+ create mode 100644 individual/dmccombs/newfile.txt
+(dans-local-test)$ git svn dcommit
+Committing to svn+ssh://svn.corp.dyndns.com/svn/individual/branches/dans-test-branch ...
+    A   individual/dmccombs/newfile.txt
+Committed r22964
+    A   individual/dmccombs/newfile.txt
+r22964 = 2b0a8a0ea3185c398b3d6ba5402f8dc5be400a2c (refs/remotes/dans-test-branch)
+No changes between current HEAD and refs/remotes/dans-test-branch
+Resetting to the latest refs/remotes/dans-test-branch
+(dans-local-test)$
+</pre>
+      </article>
+
+      <article>
+        <h2>
+          Workflow (With local branch and history cleaning)
+        </h2>
+<pre>
+(dans-local-test)$ git branch 'ectd-4199-update-file-contents'
+(dans-local-test)$ git checkout ectd-4199-update-file-contents
+Switched to branch 'ectd-4199-update-file-contents'
+(ectd-4199-update-file-contents)$ git branch
+  dans-local-test
+* ectd-4199-update-file-contents
+  master
+(ectd-4199-update-file-contents)$ echo 'Now with new content!' >> newfile.txt 
+(ectd-4199-update-file-contents)⚡$ git add newfile.txt
+(ectd-4199-update-file-contents)⚡$ git commit -m "Updating file contents."
+   [ectd-4199-update-file-contents 7b5c4d0] Updating file contents.
+   1 file changed, 1 insertion(+)
+(ectd-4199-update-file-contents)$ echo 'Important line' >> newfile.txt 
+(ectd-4199-update-file-contents)⚡$ git add newfile.txt
+(ectd-4199-update-file-contents)⚡$ git commit -m "Whoops, forgot an important line."
+   [ectd-4199-update-file-contents 6373421] Whoops, forgot an important line.
+   1 file changed, 1 insertion(+)
+(ectd-4199-update-file-contents)$ git rebase -i HEAD~2
+</pre>
+      </article>
+
+      <article>
+      <h2>
+      	Cleaning up history
+      </h2>
+<pre>
+pick 7b5c4d0 Updating file contents.
+squash 6373421 Whoops, forgot an important line.
+
+# Rebase d2e09ed..6373421 onto d2e09ed
+# #
+# # Commands:
+# #  p, pick = use commit
+# #  r, reword = use commit, but edit the commit message
+# #  e, edit = use commit, but stop for amending
+# #  s, squash = use commit, but meld into previous commit
+# #  f, fixup = like "squash", but discard this commit's log message
+# #  x, exec = run command (the rest of the line) using shell
+# #
+# # If you remove a line here THAT COMMIT WILL BE LOST.
+# # However, if you remove everything, the rebase will be aborted.
+# #
+#
+</pre>
+	</article>
+
+	<article>
+	<h2>
+		Workflow (continued)
+	</h2>
+<pre>
+(ectd-4199-update-file-contents)$ git checkout dans-local-test
+Switched to branch 'dans-local-test'
+(dans-local-test)$ git merge ectd-4199-update-file-contents
+Updating d2e09ed..e1d6f3b
 Fast-forward
- test.txt |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
-$ git branch -v
-* master ab58480 Extending the greeting
-  patch  ab58480 Extending the greeting
-$ git branch -D patch
-Deleted branch patch (was ab58480).
+ individual/dmccombs/newfile.txt |    2 ++
+ 1 file changed, 2 insertions(+)
+(dans-local-test)$ cat newfile.txt
+stuff
+Now with new content!
+Important line
+(dans-local-test)$ git svn dcommit
+Committing to svn+ssh://svn.corp.dyndns.com/svn/individual/branches/dans-test-branch ...
+...
+r22967 = 24ade24cb18baa7694e7c1589b23aee71cb61cf1 (refs/remotes/dans-test-branch)
+No changes between current HEAD and refs/remotes/dans-test-branch
+Resetting to the latest refs/remotes/dans-test-branch
+(dans-local-test)$
 </pre>
-      <p>"Fast-forward" is a simple merge. Git just updated the label-node reference!</p>
-      </article>
+	</article>
 
-      <article>
-        <h2>
-          Let's do it! Branching and MERGING (step 3)
-        </h2>
+	<article>
+	<h1>
+		Tools, Tips and Tricks
+	</h1>
+	</article>
+
+	<article>
+	<h2>
+		git add -p
+	</h2>
+	<p>
+		Git stores changes to be committed in an index, so everything in your working directory does not need to be committed, even portions of files can be committed while other changes in the same file are not.
+	</p>
 <pre>
-$ git checkout -b proofreading
-Switched to a new branch 'proofreading'
-$ vi test.txt
-$ git commit -am 'Finished proofreading'
-$ git checkout master
-Switched to branch 'master'
-$ git checkout -b qa
-Switched to a new branch 'qa'
-
-....
+dmccombs@tourian:~/git/individual/individual/dmccombs (dans-local-test)⚡$ git add -p
+diff --git a/individual/dmccombs/newfile.txt b/individual/dmccombs/newfile.txt
+index e51bbc8..d82653b 100644
+--- a/individual/dmccombs/newfile.txt
++++ b/individual/dmccombs/newfile.txt
+@@ -1,3 +1,5 @@
+ stuff
++more stuff!
+ Now with new content!
+ Important line
++Other stuff
+Stage this hunk [y,n,q,a,d,/,s,e,?]?
 </pre>
-      <p>If you switch branches with staged changes (uncommitted), Git will merge
-      staged changes with checked out branch.
-      </article>
+	</article>
+
+	<article>
+		<h2>
+			git diff
+		</h2>
+		<p>
+			By default, git diff pages and colorizes output. When run without arguments it shows the differences between the working directory and committed state.
+		</p>
+		<p>
+			By adding --cached, git diff will show the differences between the index (staged changes to be committed) and the committed state.
+		</p>
+	</article>
+
+	<article>
+		<h2>
+			git status
+		</h2>
+		<p>
+			Much like svn status, this will show what files have changed in the working directory compared to the repository. It will also show changes that are in the index ready to commit, and provides helpful information on staging changes or reverting changes.
+		</p>
+	</article>
+
+	<article>
+		<h2>
+			git bisect
+		</h2>
+		<p>
+			Bisect is a tool for tracking down the exact commit a change was introduced. This is extremely helpful in tracking down regressions and subtle bugs that are only noticed some time after they were introduced.
+		</p>
+		<p>
+			Running git bisect will allow you to specify 'good' and 'bad' revisions, and will switch to random revisions to allow you to test, and mark them good or bad, until it's able to determine the source of the 'bad' change.
+		</p>
+	</article>
+
+	<article>
+		<h2>
+			Bash prompt integration
+		</h2>
+<pre>
+function parse_git_branch {
+        git rev-parse --git-dir &> /dev/null
+        git_status="$(git status 2> /dev/null)"
+        branch_pattern="^# On branch ([^${IFS}]*)"
+        remote_pattern="# Your branch is (.*) of"
+        diverge_pattern="# Your branch and (.*) have diverged"
+        if [[ ! ${git_status} =~ "working directory clean" ]]; then
+                state="⚡"
+        fi
+        # add an else if or two here if you want to get more specific
+        if [[ ${git_status} =~ ${remote_pattern} ]]; then
+                if [[ ${BASH_REMATCH[1]} == "ahead" ]]; then
+                        remote="↑"
+                else
+                        remote="↓"
+                fi
+        fi
+        if [[ ${git_status} =~ ${diverge_pattern} ]]; then
+                remote="↕"
+        fi
+        if [[ ${git_status} =~ ${branch_pattern} ]]; then
+                branch=${BASH_REMATCH[1]}
+                echo " (${branch})${remote}${state}"
+        fi
+}
+
+if [ "$color_prompt" = yes ]; then
+    PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[01;32m\]$(parse_git_branch)\[\033[00m\]\$ '
+else
+    PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w$(parse_git_branch)\$ '
+fi
+</pre>
+	</article>
+
+	<article>
+	<h2>
+		Limitations of using git svn
+	</h2>
+	<ul>
+		<li>Limited support for svn properties</li>
+		<li>Can't take advantage of Git's merging abilities</li>
+	</ul>
+	</article>
+
+	<article>
+	<h1>
+		Questions?
+	</h1>
+	</article>
   </body>
 </html>
