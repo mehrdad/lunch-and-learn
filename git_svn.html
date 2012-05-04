@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Dyn Lunch and Learn: Using Git</title>
+    <meta charset='utf-8'>
+    <meta name='apple-mobile-web-app-capable' content='yes'>
+
+    <link rel="stylesheet" href="h5s/page.css" type="text/css" media='all' />
+
+    <link rel="stylesheet" href="h5s/screen.css" type="text/css" media='screen' title="All at once" />
+    <link rel="alternate stylesheet" href="h5s/slides.css" type="text/css" media='screen' title="Slideshow" />
+    <link rel="alternate stylesheet" href="h5s/print.css" type="text/css" media='screen' title="Print Preview" />
+
+    <link rel="stylesheet" href="h5s/print.css" type="text/css" media="print" />
+    <style>
+    // local styles here
+    </style>
+    <script type='text/javascript'>
+      var SLIDESHOW_MODE = 0; // change it to 1 to start in slideshow mode
+    </script>
+    <script src='h5s/slides.js' type='text/javascript'></script>
+  </head>
+
+  <body>
+    <section class='slides layout-widescreen template-default'>
+      <article>
+        <h1>
+          Using Git
+        </h1>
+        <h2>
+          Why and how to use it?
+        </h2>
+        <div class='author'>
+          ....
+        </div>
+      </article>
+
+      <article>
+        <h2>
+          Introduction
+        </h2>
+        <p>
+          Git is revision control system. You use one to make sure changes you do over time could be restored.
+        </p>
+        <p>
+          Git positions itself as distributed, decentralized RCS.
+        </p>
+        <p>
+          It stores all revision information in BLOBs optimized for fast operations.
+          Every working copy is effectively a fully functional fork of git
+          <abbr title='Direct Acyclic Graph'>DAG</abbr> structures and work
+          files extracted from them.
+        </p>
+      </article>
+
+      <article>
+        <h2>
+          &#147;Why do I need all this?!&nbsp;&nbsp;  How do I use it?&#148;
+        </h2>
+        TODO: add inserts to each option
+        <ul>
+        <li>Make sure git installed or install it
+        <li>Configure few options
+        <li>Create your repository
+        <li>Share your work
+        </ul>
+      </article>
+
+      <article>
+        <h2>
+         ...but directed graphs are so cool!
+        </h2>
+        <p>
+        <img src='1203-using_git/github-io-network-graph.png'/>
+        </p>
+        <ul>
+        <li>All branches and tags are just node labels.
+        <li>"Revision" is the product of previous state and applied diff.
+        </ul>
+        <p>
+        It makes merging process smarter and easier to execute! Git can also merge more than pair of branches at the same time.
+        </p>
+      </article>
+
+      <article>
+        <h2>
+          Let's do it! Creating Git Repository (step 1)
+        </h2>
+<pre>
+$ mkdir myrepo; cd myrepo
+$ git init .
+Initialized empty Git repository in ./.git/
+$ echo "Hello World" > test.txt
+$ git add test.txt
+$ git commit test.txt -m 'Adding a greeting'
+[master (root-commit) 4be30d5] Adding a greeting
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+ create mode 100644 test.txt
+</pre>
+      <p>Try it with "git status" after every line.</p>
+      <p>Try to repeat some git commands after you've already done them.</p>
+      </article>
+
+      <article>
+        <h2>
+          Let's do it! Branching and merging (step 2)
+        </h2>
+<pre>
+$ git checkout -b patch
+Switched to a new branch 'patch'
+$ git branch -v
+  master 0ac2b99 Adding a greeting
+* patch  0ac2b99 Adding a greeting
+$ echo 'Git is cool' >> test.txt
+$ git commit -am 'Extending the greeting'
+[patch ab58480] Extending the greeting
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+$ git checkout master
+Switched to branch 'master'
+$ git branch -v
+* master 0ac2b99 Adding a greeting
+  patch  ab58480 Extending the greeting
+$ git merge patch
+Updating 0ac2b99..ab58480
+Fast-forward
+ test.txt |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+$ git branch -v
+* master ab58480 Extending the greeting
+  patch  ab58480 Extending the greeting
+$ git branch -D patch
+Deleted branch patch (was ab58480).
+</pre>
+      <p>"Fast-forward" is a simple merge. Git just updated the label-node reference!</p>
+      </article>
+
+      <article>
+        <h2>
+          Let's do it! Branching and MERGING (step 3)
+        </h2>
+<pre>
+$ git checkout -b proofreading
+Switched to a new branch 'proofreading'
+$ vi test.txt
+$ git commit -am 'Finished proofreading'
+$ git checkout master
+Switched to branch 'master'
+$ git checkout -b qa
+Switched to a new branch 'qa'
+
+....
+</pre>
+      <p>If you switch branches with staged changes (uncommitted), Git will merge
+      staged changes with checked out branch.
+      </article>
+  </body>
+</html>
