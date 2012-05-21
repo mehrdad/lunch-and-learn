@@ -622,7 +622,7 @@ function rmMeta() {
 }
 
 function makeBuildLists() {
-  for (var i = curSlide, slide; slide = slideEls[i]; i++) {
+  for (var i = 0, slide; slide = slideEls[i]; i++) {
     var items = slide.querySelectorAll('.build > *');
     for (var j = 0, item; item = items[j]; j++) {
       if (item.classList) {
