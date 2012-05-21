@@ -473,6 +473,7 @@ function speakPrevItem() {
 function getCurSlideFromHash() {
   var slideNo = parseInt(location.hash.substr(1));
   if (slideNo) {
+    if (!slideNo && SLIDESHOW_MODE) slideNo = 1;
     if (slideNo < 1) slideNo = 1;
     else if (slideNo > slideEls.length ) slideNo = slideEls.length;
 
@@ -621,7 +622,7 @@ function rmMeta() {
 }
 
 function makeBuildLists() {
-  for (var i = curSlide, slide; slide = slideEls[i]; i++) {
+  for (var i = 0, slide; slide = slideEls[i]; i++) {
     var items = slide.querySelectorAll('.build > *');
     for (var j = 0, item; item = items[j]; j++) {
       if (item.classList) {
