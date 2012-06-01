@@ -55,15 +55,26 @@
 
       <article>
         <h2>
-          &#147;Why do I need all this?!&nbsp;&nbsp;  How do I use it?&#148;
+          &#147;Why do I need all this?!<br/>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Just say how to use it!&#148;
         </h2>
+        &nbsp;
         <ul>
-        <li>Make sure git installed or install it
-        <ul class='build'><li>go to <a href=http://git-scm.com/>http://git-scm.com/</a></li></ul>
-        <li>Configure few options
-        <dd class='build'></dd>
+        <li>Make sure git installed or install it &nbsp;(<a href=http://git-scm.com/>http://git-scm.com/</a> can help)
+        <li>Configure two options
+        <div class='build'><pre>
+$ git config --global user.name "Your Name"
+$ git config --global user.email "yname@example.org"</pre></div>
         <li>Create your repository
+        <div class='build'><pre>
+$ mkdir myproject
+$ git init myproject</pre></div>
         <li>Share your work
+        <div class='build'><pre>
+$ ssh svn.corp.dyndns.com git init --bare /git/myproject.git
+$ git remote add dyngit ssh://svn.corp.dyndns.com/git/myproject.git
+$ git push dyngit master</pre></div>
+
         </ul>
       </article>
 
