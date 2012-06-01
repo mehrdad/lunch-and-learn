@@ -103,6 +103,9 @@ b {
 .black {
   color: black;
 }
+.gray {
+  color: #777;
+}
 .white {
   color: white;
 }
