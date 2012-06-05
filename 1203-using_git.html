@@ -53,9 +53,8 @@
         </p>
         <p>
           It stores all revision information in BLOBs optimized for fast operations.
-          Every working copy is effectively a fully functional fork of git 
-          <abbr title='Direct Acyclic Graph'>DAG</abbr> structures and work
-          files extracted from them.
+          Every working copy is effectively a fully functional fork of git's
+          Direct Acyclic Graph structures and work files extracted from them.
         </p>
       </article>
 
@@ -91,85 +90,378 @@ $ git push dyngit master</pre></div>
         <p>
         <img src='1203-using_git/github-io-network-graph.png'/>
         </p>
+        <small>
         <ul>
-        <li>All branches and tags are just node labels.
-        <li>"Revision" is the product of previous state and applied diff.
+        <li>Revision is the product of previous state and applied diff.
+        <li>Git is one big hierarchy of objects that represent revisions.
+        <li>HEAD, master and others track history of revision objects they point to.
         </ul>
-        <p>
-        It makes merging process smarter and easier to execute! Git can also merge more than pair of branches at the same time.
-        </p>
+        </small>
       </article>
 
       <article>
         <h2>
-          Let's do it! Creating Git Repository (step 1)
+          Creating Git Repository
         </h2>
+<div class='code build'>
 <pre>
-$ mkdir myrepo; cd myrepo
-$ git init .
-Initialized empty Git repository in ./.git/
+$ git init myrepo
+Initialized empty Git repository in myrepo/.git/
+</pre>
+<pre>
+$ cd myrepo
 $ echo "Hello World" > test.txt
 $ git add test.txt
+</pre>
+<pre>
 $ git commit test.txt -m 'Adding a greeting'
 [master (root-commit) 4be30d5] Adding a greeting
  1 files changed, 1 insertions(+), 0 deletions(-)
  create mode 100644 test.txt
 </pre>
-      <p>Try it with "git status" after every line.</p>
-      <p>Try to repeat some git commands after you've already done them.</p>
+<pre>
+$ git log
+commit 581ff59640caec1cf54d1390c626a1a40e7a74b0
+Author: Alex Sergeyev <asergeyev@dyn.com>
+Date:   Fri Jun 1 18:02:36 2012 -0400
+
+    Adding a greeting
+</pre>
+</div>
+      <p class='labrat'>try it with "git status" after various steps</p>
+      </article>
+
+      <article>
+      <h2>Branching</h2>
+<div class='code build'>
+<div>
+<div class='note'>
+"checkout -b" is same as<br/>
+<code style="font-size:20px">git branch feature; git checkout feature</code>
+</div>
+<pre>
+$ git checkout -b feature
+Switched to a new branch 'feature'
+$ git branch -v
+* feature 581ff59 Adding a greeting
+  master  581ff59 Adding a greeting
+</pre></div>
+<pre>
+$ echo 'Git is cool' > aboutgit.txt
+$ git add aboutgit.txt
+$ git commit -m 'New article'
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+ create mode 100644 aboutgit.txt
+</pre>
+<pre>
+$ git checkout master
+Switched to branch 'master'
+$ git branch -v
+  feature f11314d New article
+* master  581ff59 Adding a greeting
+$ ls
+test.txt
+</pre><pre>
+$ echo "As introduced by Brian Kernighan & Dennis Ritchie" >> test.txt
+$ git commit test.txt -m 'Some background info'
+[master 6fb241a] Some background info
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+</pre>
+</div>
+</div>
       </article>
 
       <article>
         <h2>
-          Let's do it! Branching and merging (step 2)
+          Cloning/remote branching
         </h2>
+<div class='code build'>
 <pre>
-$ git checkout -b patch
-Switched to a new branch 'patch'
+$ git clone ssh://localhost/~/myrepo newdir
+Cloning into 'newdir'...
+asergeyev@localhost's password: 
+remote: Counting objects: 22, done.
+remote: Compressing objects: 100% (14/14), done.
+remote: Total 22 (delta 5), reused 0 (delta 0)
+Receiving objects: 100% (22/22), done.
+Resolving deltas: 100% (5/5), done.
+</pre><pre>
+$ cd newdir
 $ git branch -v
-  master 0ac2b99 Adding a greeting
-* patch  0ac2b99 Adding a greeting
-$ echo 'Git is cool' >> test.txt
-$ git commit -am 'Extending the greeting'
-[patch ab58480] Extending the greeting
- 1 files changed, 1 insertions(+), 0 deletions(-)
-$ git checkout master
-Switched to branch 'master'
-$ git branch -v
-* master 0ac2b99 Adding a greeting
-  patch  ab58480 Extending the greeting
-$ git merge patch
-Updating 0ac2b99..ab58480
-Fast-forward
- test.txt |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
-$ git branch -v
-* master ab58480 Extending the greeting
-  patch  ab58480 Extending the greeting
-$ git branch -D patch
-Deleted branch patch (was ab58480).
+* master 6fb241a Some background info
+</pre><pre>
+$ git branch -rv
+  origin/HEAD    -> origin/master
+  origin/feature f11314d New article
+  origin/master  6fb241a Some background info
 </pre>
-      <p>"Fast-forward" is a simple merge. Git just updated the label-node reference!</p>
+<div>
+<div class='note'>no backtracking here</div>
+<pre>
+$ cd ../myrepo
+$ git branch -r
+</pre>
+</div>
+</div>
+<div class='build'>
+<p>Remote branches are fully independent from yours</p>
+</div>
       </article>
 
       <article>
         <h2>
-          Let's do it! Branching and MERGING (step 3)
+          Reflog (yeah it's complicated)
         </h2>
-<pre>
-$ git checkout -b proofreading
-Switched to a new branch 'proofreading'
-$ vi test.txt
-$ git commit -am 'Finished proofreading'
-$ git checkout master
-Switched to branch 'master'
-$ git checkout -b qa
-Switched to a new branch 'qa'
-
-....
+<div class='code'>
+<pre class='just-built'>
+$ git reflog master
+6fb241a master@{0}: commit: Some background info
+581ff59 master@{1}: commit (initial): Adding a greeting
 </pre>
-      <p>If you switch branches with staged changes (uncommitted), Git will merge
-      staged changes with checked out branch.
+<div class='build'>
+<pre>
+$ git reflog feature
+f11314d feature@{0}: commit: New article
+581ff59 feature@{1}: branch: Created from HEAD
+</pre><pre>
+$ git checkout feature
+Switched to branch 'feature'
+$ git checkout -q master
+$ git checkout -q feature
+</pre><pre>
+$ git reflog HEAD
+f11314d HEAD@{0}: checkout: moving from master to feature
+6fb241a HEAD@{1}: checkout: moving from feature to master
+f11314d HEAD@{2}: checkout: moving from master to feature
+6fb241a HEAD@{3}: commit: Some background info
+581ff59 HEAD@{4}: checkout: moving from feature to master
+f11314d HEAD@{5}: commit: New article
+581ff59 HEAD@{6}: checkout: moving from master to feature
+581ff59 HEAD@{7}: commit (initial): Adding a greeting
+</pre>
+</div>
+</div>
+<div class='build'>
+<p>As long as you are not changing the history and commit often you 
+are safe with&nbsp;git.</p>
+</div>
       </article>
+
+      <article>
+        <h2>
+          Tags: Named References
+        </h2>
+        <ul>
+        <li>Simple placemakers
+        <pre>
+$ git tag somename
+$ git log somename --oneline
+f11314d New article
+581ff59 Adding a greeting
+$ git reflog somename
+        </pre>
+        </li>
+        <li>Special static reference logs</li>
+<pre>
+$ git tag -a newtag -m "New tag"
+$ git log newtag --oneline
+f11314d New article
+581ff59 Adding a greeting
+$ git reflog newtag
+f11314d 581ff59
+</pre>
+        </ul>
+        <p>Tags can be PGP signed and verifid, see "man git-tag"</p>
+        <p>You can push/pull tags adding "--tags" to appropriate command.</p>
+        <p>Try to name your tags with same name as your branches, or HEAD :)</p>
+      </article>
+
+      <article>
+        <h2>
+          Simple Merge
+        </h2>
+<pre style='max-height:600px'>
+$ git checkout -q feature
+$ ls > catalog
+$ git add catalog
+$ git commit -m "Article catalog"
+[feature 95f74c0] Article catalog
+ 1 files changed, 3 insertions(+), 0 deletions(-)
+  create mode 100644 catalog
+$ git checkout -q master
+$ git merge feature
+Merge made by the 'recursive' strategy.
+ aboutgit.txt |    1 +
+ catalog      |    3 +++
+ 2 files changed, 4 insertions(+), 0 deletions(-)
+ create mode 100644 aboutgit.txt
+ create mode 100644 catalog
+$ git commit .
+# On branch master
+nothing to commit (working directory clean)
+$ WT* WHY!?
+bash: !?: event not found
+$ git reflog master
+14efb87 master@{0}: merge feature: Merge made by the 'recursive' strategy.
+6fb241a master@{1}: commit: Some background info
+581ff59 master@{2}: commit (initial): Adding a greeting
+</pre>
+      </article>
+
+      <article>
+        <h2>
+          Rebase
+        </h2>
+<div class='code'>
+<div>
+<div class='note'>make some changes</div>
+<pre>
+$ git checkout -qb newart
+$ git add story.txt
+$ git commit -aqm 'New story'
+$ git checkout -q master
+$ git mv test.txt hello.txt
+$ git commit -aqm "Better file name"
+$ git checkout -q newart
+$ git commit -aqm 'Adding story to the catalog'
+$ git checkout -q master
+</pre>
+</div>
+<div class='build'><div>
+<div class='note'>merge changesets</div>
+<pre>
+$ git rebase newart
+First, rewinding head to replay your work on top of it...
+Applying: Better file name
+</pre>
+</div>
+<div>
+<pre>
+$ git log --graph --pretty=oneline --abbrev-commit
+* a60f50e Better file name
+* 8dcbafb Adding story to the catalog
+* c3dcc45 New story
+*   14efb87 Merge branch 'feature'
+|\  
+| * 95f74c0 Article catalog
+| * f11314d New article
+* | 6fb241a Some background info
+|/  
+* 581ff59 Adding a greeting
+</pre>
+</div>
+</div>
+<div class='build'><div>
+<div class='note'>more info</div>
+<pre>
+$ man git-merge
+$ man git-rebase</span>
+</pre>
+</div></div>
+</div>
+      </article>
+
+      <article class='smaller'>
+        <h2>
+          What happens
+        </h2>
+<img src='1203-using_git/before.png' style='float:left;margin-right:10px;height:300px'/>
+<div>
+<img src='1203-using_git/basic.png' style='height:155px;vertical-align:center'/> (merge)<br/>
+<img src='1203-using_git/rebase.png' style='height:140px'/> (rebase)
+</div>
+      </article>
+
+      <article>
+        <h2>
+          Working with remotes
+        </h2>
+        <p>1. List/update current remotes</p>
+<pre>
+$ git remote -v
+$ man git-remote
+</pre>
+        <p>2. Sending your work to remote branch</p>
+<pre>
+$ git push myremote localbranch:remotebranch
+$ git push myremote
+$ git push myremote +localbranch:remotetomerge
+</pre>
+        <p>3. Checking out changes made by others</p>
+<pre>
+$ git pull --no-commit myremote remotebranch:localbranch
+$ git pull myremote
+</pre>
+        <p>4. Applying patches</p>
+<pre>
+$ git apply somepatch.diff
+</pre>
+
+
+      </article>
+
+      <article>
+        <h2>
+          Undoing things
+        </h2>
+<p>Staged file back to one saved in repo:</p>
+<pre>
+$ git checkout -- filename.ext
+</pre>
+
+<p>Appending stuff to last commit:</p>
+<pre>
+$ git commit --amend
+</pre>
+
+<p>Reverting state to "before last commit:" <sup class='red' style='font-size:50%'>(be careful)</sup></p>
+<pre>
+$ git reset --soft HEAD^
+</pre>
+
+<p>Preparing reversed changeset:</p>
+<pre>
+$ git revert -n COMMIT_OR_REF
+</pre>
+      </article>
+
+
+
+      <article class='smaller'>
+        <h2>
+          You are going to like git when you...
+        </h2>
+<p>1. will know what HEAD~3^2 means</p>
+<pre>
+$ git show HEAD^^^^2
+</pre>
+<p>2. would consider making your own command aliases</p>
+<pre>
+$ git config --global alias.granny 'show HEAD^^'
+</pre>
+<p>3. will know difference between two and three dots</p>
+<pre>
+$ git log --left-right --oneline origin/master...master
+</pre>
+<p>4. will finish reading about commands with dashes</p>
+<pre>
+$ man git-cherry-pick
+$ man git-diff-tree
+$ man git-read-tree
+$ git merge --squash -s subtree --no-commit mybranch
+</pre>
+<p>5. would figure out interactive git tools</p>
+<pre>
+$ git rebase -i HEAD~3
+$ git add -i
+$ git add -p
+$ git mergetool
+</pre>
+      </article>
+  <article>
+        <h2>
+        QUESTIONS?
+        </h2>
+    </article>
   </body>
 </html>
