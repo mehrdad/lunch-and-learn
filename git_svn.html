@@ -13,7 +13,9 @@
 
     <link rel="stylesheet" href="h5s/print.css" type="text/css" media="print" />
     <style>
-    pre{background:black;color:green}
+	pre,div.code{background:black;color:#3f3;line-height:105%}
+	pre.just-built,.just-built pre {color:yellow}
+	.small{font-size:75%}
     </style>
     <script type='text/javascript'>
       var SLIDESHOW_MODE = 1; // change it to 1 to start in slideshow mode
@@ -70,8 +72,11 @@
         <h2>
             Getting started
         </h2>
+<div class='code build'>
 <pre>
 $ git svn clone svn+ssh://svn.corp.dyndns.com/svn/individual -r 22927:HEAD --stdlayout
+</pre>
+<pre>
 Initialized empty Git repository in /home/dmccombs/git/individual/.git/
         A       individual/ctuininga/bdr_salesforce_tool/manage.py
         A       individual/ctuininga/bdr_salesforce_tool/views.py
@@ -81,6 +86,7 @@ Initialized empty Git repository in /home/dmccombs/git/individual/.git/
 Checked out HEAD:
   svn+ssh://svn.corp.dyndns.com/svn/individual/trunk r22962
 </pre>
+</div>
         <p><strong>Note:</strong> Make sure you specify -r with large repositories to avoid a long clone pulling down all history of the repository.
       </article>
 
@@ -94,17 +100,27 @@ Checked out HEAD:
         <p>
             You can list available remote svn branches with the command 'git branch -a' and then track them locally.
         </p>
+<div class='code build'>
 <pre>
 (master)$ git branch -a
+</pre>
+<pre>
 * master
   remotes/dans-test-branch
   remotes/trunk
+</pre>
+<pre>
 (master)$ git checkout -b dans-local-test remotes/dans-test-branch
+</pre>
+<pre>
 Switched to a new branch 'dans-local-test'
+</pre>
+<pre>
 (dans-local-test)$ git branch
 * dans-local-test
   master
 </pre>
+</div>
         <p>
             You can then use 'git checkout' to switch between branches
         </p>
@@ -138,14 +154,25 @@ Switched to a new branch 'dans-local-test'
         <h2>
           Workflow (Basic)
         </h2>
+<div class='code build'>
 <pre>
 (dans-local-test)$ echo 'stuff' > newfile.txt
+</pre>
+<pre>
 (dans-local-test)⚡$ git add newfile.txt
+</pre>
+<pre>
 (dans-local-test)⚡$ git commit -m "Adding a new file."
+</pre>
+<pre>
 [dans-local-test 0b8f8ac] Adding a new file.
  1 file changed, 1 insertion(+)
  create mode 100644 individual/dmccombs/newfile.txt
+</pre>
+<pre>
 (dans-local-test)$ git svn dcommit
+</pre>
+<pre>
 Committing to svn+ssh://svn.corp.dyndns.com/svn/individual/branches/dans-test-branch ...
     A   individual/dmccombs/newfile.txt
 Committed r22964
@@ -155,42 +182,71 @@ No changes between current HEAD and refs/remotes/dans-test-branch
 Resetting to the latest refs/remotes/dans-test-branch
 (dans-local-test)$
 </pre>
+</div>
       </article>
 
       <article>
         <h2>
           Workflow (With local branch and history cleaning)
         </h2>
+<div class='code build'>
 <pre>
-(dans-local-test)$ git branch ectd-4199-update-file-contents
-(dans-local-test)$ git checkout ectd-4199-update-file-contents
+(dans-local-test)$ git checkout -b ectd-4199-update-file-contents
+</pre>
+<pre>
 Switched to branch 'ectd-4199-update-file-contents'
+</pre>
+<pre>
 (ectd-4199-update-file-contents)$ git branch
+</pre>
+<pre>
   dans-local-test
 * ectd-4199-update-file-contents
   master
+</pre>
+<pre>
 (ectd-4199-update-file-contents)$ echo 'Now with new content!' >> newfile.txt 
+</pre>
+<pre>
 (ectd-4199-update-file-contents)⚡$ git add newfile.txt
+</pre>
+<pre>
 (ectd-4199-update-file-contents)⚡$ git commit -m "Updating file contents."
+</pre>
+<pre>
    [ectd-4199-update-file-contents 7b5c4d0] Updating file contents.
    1 file changed, 1 insertion(+)
+</pre>
+<pre>
 (ectd-4199-update-file-contents)$ echo 'Important line' >> newfile.txt 
+</pre>
+<pre>
 (ectd-4199-update-file-contents)⚡$ git add newfile.txt
+</pre>
+<pre>
 (ectd-4199-update-file-contents)⚡$ git commit -m "Whoops, forgot an important line."
+</pre>
+<pre>
    [ectd-4199-update-file-contents 6373421] Whoops, forgot an important line.
    1 file changed, 1 insertion(+)
+</pre>
+<pre>
 (ectd-4199-update-file-contents)$ git rebase -i HEAD~2
 </pre>
+</div>
       </article>
 
       <article>
       <h2>
       	Cleaning up history
       </h2>
-<pre>
+<div class='code'>
+<pre class='just-built'>
 pick 7b5c4d0 Updating file contents.
 squash 6373421 Whoops, forgot an important line.
+</pre>
 
+<pre>
 # Rebase d2e09ed..6373421 onto d2e09ed
 # #
 # # Commands:
@@ -206,25 +262,41 @@ squash 6373421 Whoops, forgot an important line.
 # #
 #
 </pre>
+</div>
 	</article>
 
 	<article>
 	<h2>
 		Workflow (continued)
 	</h2>
+<div class='code build'>
 <pre>
 (ectd-4199-update-file-contents)$ git checkout dans-local-test
+</pre>
+<pre>
 Switched to branch 'dans-local-test'
+</pre>
+<pre>
 (dans-local-test)$ git merge ectd-4199-update-file-contents
+</pre>
+<pre>
 Updating d2e09ed..e1d6f3b
 Fast-forward
  individual/dmccombs/newfile.txt |    2 ++
  1 file changed, 2 insertions(+)
+</pre>
+<pre>
 (dans-local-test)$ cat newfile.txt
+</pre>
+<pre>
 stuff
 Now with new content!
 Important line
+</pre>
+<pre>
 (dans-local-test)$ git svn dcommit
+</pre>
+<pre>
 Committing to svn+ssh://svn.corp.dyndns.com/svn/individual/branches/dans-test-branch ...
 ...
 r22967 = 24ade24cb18baa7694e7c1589b23aee71cb61cf1 (refs/remotes/dans-test-branch)
@@ -232,6 +304,7 @@ No changes between current HEAD and refs/remotes/dans-test-branch
 Resetting to the latest refs/remotes/dans-test-branch
 (dans-local-test)$
 </pre>
+</div>
 	</article>
 
 	<article>
@@ -247,8 +320,11 @@ Resetting to the latest refs/remotes/dans-test-branch
 	<p>
 		Git stores changes to be committed in an index, so everything in your working directory does not need to be committed, even portions of files can be committed while other changes in the same file are not.
 	</p>
+<div class='code build'>
 <pre>
-dmccombs@tourian:~/git/individual/individual/dmccombs (dans-local-test)⚡$ git add -p
+(dans-local-test)⚡$ git add -p
+</pre>
+<pre>
 diff --git a/individual/dmccombs/newfile.txt b/individual/dmccombs/newfile.txt
 index e51bbc8..d82653b 100644
 --- a/individual/dmccombs/newfile.txt
@@ -261,6 +337,7 @@ index e51bbc8..d82653b 100644
 +Other stuff
 Stage this hunk [y,n,q,a,d,/,s,e,?]?
 </pre>
+</div>
 	</article>
 
 	<article>
@@ -358,6 +435,13 @@ fi
 	<h1>
 		Questions?
 	</h1>
+	<br>
+	<p class='small'>References:
+	<ul class='small'>
+		<li><a href='http://git.or.cz/course/svn.html'>Git - SVN Crash Course</a> (http://git.or.cz/course/svn.html)</li>
+		<li><a href='http://reinh.com/blog/2009/03/02/a-git-workflow-for-agile-teams.html'>A Git Workflow for Agile Teams</a> (http://reinh.com/blog/2009/03/02/a-git-workflow-for-agile-teams.html)</li>
+	</ul>
+	</p>
 	</article>
   </body>
 </html>
