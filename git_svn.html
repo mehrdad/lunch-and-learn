@@ -74,17 +74,16 @@
         </h2>
 <div class='code build'>
 <pre>
-$ git svn clone svn+ssh://svn.corp.dyndns.com/svn/individual -r 22927:HEAD --stdlayout
+$ git svn clone svn+ssh://svn.hostname/svnpath/repo -r 22927:HEAD --stdlayout
 </pre>
 <pre>
 Initialized empty Git repository in /home/dmccombs/git/individual/.git/
-        A       individual/ctuininga/bdr_salesforce_tool/manage.py
-        A       individual/ctuininga/bdr_salesforce_tool/views.py
-        A       individual/ctuininga/bdr_salesforce_tool/__init__.py
-        A       individual/ctuininga/bdr_salesforce_tool/3rd_party/Django-1.3.1.tar.gz
+        A       repos/src/bd_tool/manage.py
+        A       repos/src/bd_tool/views.py
+        A       repos/src/bd_tool/__init__.py
 ...
 Checked out HEAD:
-  svn+ssh://svn.corp.dyndns.com/svn/individual/trunk r22962
+  svn+ssh://svn.hostname/svnpath/repo/trunk r22962
 </pre>
 </div>
         <p><strong>Note:</strong> Make sure you specify -r with large repositories to avoid a long clone pulling down all history of the repository.
@@ -173,7 +172,7 @@ Switched to a new branch 'dans-local-test'
 (dans-local-test)$ git svn dcommit
 </pre>
 <pre>
-Committing to svn+ssh://svn.corp.dyndns.com/svn/individual/branches/dans-test-branch ...
+Committing to svn+ssh://svn.hostname/svnpath/repo/branches/dans-test-branch ...
     A   individual/dmccombs/newfile.txt
 Committed r22964
     A   individual/dmccombs/newfile.txt
@@ -297,7 +296,7 @@ Important line
 (dans-local-test)$ git svn dcommit
 </pre>
 <pre>
-Committing to svn+ssh://svn.corp.dyndns.com/svn/individual/branches/dans-test-branch ...
+Committing to svn+ssh://svn.hostname/svnpath/repo/branches/dans-test-branch ...
 ...
 r22967 = 24ade24cb18baa7694e7c1589b23aee71cb61cf1 (refs/remotes/dans-test-branch)
 No changes between current HEAD and refs/remotes/dans-test-branch

@@ -476,6 +476,8 @@ function speakPrevItem() {
 /* Hash functions */
 function getCurSlideFromHash() {
   var slideNo = parseInt(location.hash.substr(1));
+  if (SLIDESHOW_MODE && !slideNo)
+    slideNo = 1;
   if (slideNo) {
     if (!slideNo && SLIDESHOW_MODE) slideNo = 1;
     if (slideNo < 1) slideNo = 1;

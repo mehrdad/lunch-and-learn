@@ -18,7 +18,7 @@
 
     </style>
     <script type='text/javascript'>
-      var SLIDESHOW_MODE = 0; // change it to 1 to start in slideshow mode
+      var SLIDESHOW_MODE = 1; // change it to 1 to start in slideshow mode
     </script>
     <script src='h5s/slides.min.js' type='text/javascript'></script>
   </head>
@@ -111,7 +111,7 @@ $ git init myproject</pre></div>
         <div class='build'>
 <div class='code' style='margin-top:0'><pre>
 $ ssh githostname.tld git init --bare /git/myproject.git
-$ git remote add dyngit ssh://svn.corp.dyndns.com/git/myproject.git
+$ git remote add dyngit ssh://git.hostname//gitpath/myproject.git
 $ git push dyngit master</pre>
 <div class='build'><pre>
 $ git remote add github git@github.com:username/myproject.git
