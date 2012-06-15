@@ -1,6 +1,0 @@
-all: js
-
-include ../Makefile
-
-
-
