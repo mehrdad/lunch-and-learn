@@ -26,26 +26,36 @@
   <body>
     <section class='slides layout-widescreen template-default'>
       <article>
-        <h1>
-          Using Git
+        <h1 style='font-size:2000%;opacity:.1'>
+          Git
         </h1>
         <h2>
-          Why and how to use it?
+          Why and how to use Git?
         </h2>
-        <div class='author'>
-          A.K.A. Git L&L Part I
+        <p style='margin-top:2em'>
+          Dyn Inc Lunch n' Learn Seminar (Part I)
+        </p>
+        <div class='author' style='font-size:smaller'>
+          <a href='https://twitter.com/alexsergeyev'>@alexsergeyev</a>
         </div>
       </article>
 
       <article>
         <h2>Goals</h2>
-        <ul>
+        <ul class='build'>
+        <li>Know git basics to be able to use it while coding.</li>
+        <li>Learn where to get more information to learn about git.</li>
+        <li>Understand some differences between git and svn.</li>
         </ul>
+        <div class='build'>
+          <h4>...</h4>
+          <p class='labrat'>take a minute and write your own ones.</p>
+        </dib>
       </article>
 
       <article>
         <h2>
-          Introduction
+          Git
         </h2>
         <p>
           Git is revision control system. You use one to make sure changes you do over time could be restored.
@@ -54,10 +64,31 @@
           Git positions itself as distributed, decentralized RCS.
         </p>
         <p>
-          It stores all revision information in BLOBs optimized for fast operations.
           Every working copy is effectively a fully functional fork of git's
           Direct Acyclic Graph structures and work files extracted from them.
         </p>
+        <p>
+          (stores all revision information in BLOBs optimized for fast operations)
+        </p>
+      </article>
+
+      <article>
+        <h2>
+          "Git" stands for...
+        </h2>
+        <div class='build'>
+        <div>
+        <q>
+        I&#146;m an egotistical bastard, and I name all my projects after myself. First &#145;Linux&#146;, now &#145;git&#146;.
+        </q>
+        <div class='author'><small>
+        (Linus Torvalds, according to <a href='http://en.wikipedia.org/wiki/Git_%28software%29#Name'>Wikipedia</a> and its sources)
+        </small></div>
+        <p>
+        <img src='1203-using_git/git.png'>
+        </p>
+        </div>
+        </div>
       </article>
 
       <article>
@@ -77,10 +108,14 @@ $ git config --global user.email "yname@example.org"</pre></div>
 $ mkdir myproject
 $ git init myproject</pre></div>
         <li>Share your work
-        <div class='build'><pre>
-$ ssh svn.corp.dyndns.com git init --bare /git/myproject.git
+        <div class='build'>
+<div class='code' style='margin-top:0'><pre>
+$ ssh githostname.tld git init --bare /git/myproject.git
 $ git remote add dyngit ssh://svn.corp.dyndns.com/git/myproject.git
-$ git push dyngit master</pre></div>
+$ git push dyngit master</pre>
+<div class='build'><pre>
+$ git remote add github git@github.com:username/myproject.git
+$ git push github master</pre></div></div></div>
 
         </ul>
       </article>
@@ -202,25 +237,27 @@ $ git branch -rv
 <pre>
 $ cd ../myrepo
 $ git branch -r
+$ 
 </pre>
 </div>
 </div>
 <div class='build'>
-<p>Remote branches are fully independent from yours</p>
+<p>Remote branches are fully independent from yours.</p>
+<p>You can change name of branch when you pulling it.</p>
 </div>
       </article>
 
       <article>
         <h2>
-          Reflog (yeah it's complicated)
+          Reflog 
         </h2>
-<div class='code'>
-<pre class='just-built'>
+        <p class='gray'>(nap if you did not like DAG part)</p>
+<div class='code build'>
+<pre>
 $ git reflog master
 6fb241a master@{0}: commit: Some background info
 581ff59 master@{1}: commit (initial): Adding a greeting
 </pre>
-<div class='build'>
 <pre>
 $ git reflog feature
 f11314d feature@{0}: commit: New article
@@ -242,9 +279,8 @@ f11314d HEAD@{5}: commit: New article
 581ff59 HEAD@{7}: commit (initial): Adding a greeting
 </pre>
 </div>
-</div>
 <div class='build'>
-<p>As long as you are not changing the history and commit often you 
+<p>As long as you are not re-writing the history<br/>and commit often you 
 are safe with&nbsp;git.</p>
 </div>
       </article>
@@ -255,15 +291,18 @@ are safe with&nbsp;git.</p>
         </h2>
         <ul>
         <li>Simple placemakers
-        <pre>
+        <div>
+<pre>
 $ git tag somename
 $ git log somename --oneline
 f11314d New article
 581ff59 Adding a greeting
 $ git reflog somename
-        </pre>
+</pre>
+        </div>
         </li>
-        <li>Special static reference logs</li>
+        <li>Special static reference logs
+        <div>
 <pre>
 $ git tag -a newtag -m "New tag"
 $ git log newtag --oneline
@@ -271,18 +310,21 @@ f11314d New article
 581ff59 Adding a greeting
 $ git reflog newtag
 f11314d 581ff59
-</pre>
+</pre></div>
         </ul>
-        <p>Tags can be PGP signed and verifid, see "man git-tag"</p>
-        <p>You can push/pull tags adding "--tags" to appropriate command.</p>
-        <p>Try to name your tags with same name as your branches, or HEAD :)</p>
+        <ol style='list-style-type:disc;line-height:140%'>
+        <li>You can push/pull tags adding "--tags" to them.</li>
+        <li>Tags work for commands that use commit id or branch name.</li>
+        <li>Tags can be PGP signed and verified later.</li>
+        </ol>
       </article>
 
       <article>
         <h2>
           Simple Merge
         </h2>
-<pre style='max-height:600px'>
+<div class='code build'>
+<pre>
 $ git checkout -q feature
 $ ls > catalog
 $ git add catalog
@@ -290,24 +332,29 @@ $ git commit -m "Article catalog"
 [feature 95f74c0] Article catalog
  1 files changed, 3 insertions(+), 0 deletions(-)
   create mode 100644 catalog
+</pre><div><div class='note'>git merge &lt;branchname></div><pre>
 $ git checkout -q master
 $ git merge feature
 Merge made by the 'recursive' strategy.
- aboutgit.txt |    1 +
- catalog      |    3 +++
+ aboutgit.txt |     1 +
+ catalog      |     3 +++
  2 files changed, 4 insertions(+), 0 deletions(-)
  create mode 100644 aboutgit.txt
  create mode 100644 catalog
+</pre><pre>
 $ git commit .
 # On branch master
 nothing to commit (working directory clean)
+</pre></div><pre>
 $ WT* WHY!?
 bash: !?: event not found
+</pre><div><div class='note' style='margin-top:-190px;margin-bottom:190px'>(auto-commits the changeset)</div><pre>
 $ git reflog master
 14efb87 master@{0}: merge feature: Merge made by the 'recursive' strategy.
 6fb241a master@{1}: commit: Some background info
 581ff59 master@{2}: commit (initial): Adding a greeting
 </pre>
+</div>
       </article>
 
       <article>
@@ -316,7 +363,6 @@ $ git reflog master
         </h2>
 <div class='code'>
 <div>
-<div class='note'>make some changes</div>
 <pre>
 $ git checkout -qb newart
 $ git add story.txt
@@ -330,7 +376,7 @@ $ git checkout -q master
 </pre>
 </div>
 <div class='build'><div>
-<div class='note'>merge changesets</div>
+<div class='note'>git rebase &lt;branchname></div>
 <pre>
 $ git rebase newart
 First, rewinding head to replay your work on top of it...
@@ -354,7 +400,7 @@ $ git log --graph --pretty=oneline --abbrev-commit
 </div>
 </div>
 <div class='build'><div>
-<div class='note'>more info</div>
+<div class='note'>very good reading</div>
 <pre>
 $ man git-merge
 $ man git-rebase</span>
@@ -367,7 +413,7 @@ $ man git-rebase</span>
         <h2>
           What happens
         </h2>
-<img src='1203-using_git/before.png' style='float:left;margin-right:10px;height:300px'/>
+<img src='1203-using_git/before.png' style='float:left;margin-right:30px;height:300px'/>
 <div>
 <img src='1203-using_git/basic.png' style='height:155px;vertical-align:center'/> (merge)<br/>
 <img src='1203-using_git/rebase.png' style='height:140px'/> (rebase)
@@ -452,7 +498,7 @@ $ man git-diff-tree
 $ man git-read-tree
 $ git merge --squash -s subtree --no-commit mybranch
 </pre>
-<p>5. would figure out interactive git tools</p>
+<p>5. would figure out interactive git tools <sup class='yellow' style='font-size:70%'>(very helpful)</sup></p>
 <pre>
 $ git rebase -i HEAD~3
 $ git add -i
