@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Dyn Lunch and Learn: Using Git with SVN</title>
+    <meta charset='utf-8'>
+    <meta name='apple-mobile-web-app-capable' content='yes'>
+
+    <link rel="stylesheet" href="h5s/page.css" type="text/css" media='all' />
+
+    <link rel="stylesheet" href="h5s/screen.css" type="text/css" media='screen' title="All at once" />
+    <link rel="alternate stylesheet" href="h5s/slides.css" type="text/css" media='screen' title="Slideshow" />
+    <link rel="alternate stylesheet" href="h5s/print.css" type="text/css" media='screen' title="Print Preview" />
+
+    <link rel="stylesheet" href="h5s/print.css" type="text/css" media="print" />
+    <style>
+	pre,div.code{background:black;color:#3f3;line-height:105%}
+	pre.just-built,.just-built pre {color:yellow}
+	.small{font-size:75%}
+    </style>
+    <script type='text/javascript'>
+      var SLIDESHOW_MODE = 1; // change it to 1 to start in slideshow mode
+    </script>
+    <script src='h5s/slides.min.js' type='text/javascript'></script>
+  </head>
+
+  <body>
+    <section class='slides layout-widescreen template-default'>
+      <article>
+        <h1>
+          Using Git with SVN
+        </h1>
+      </article>
+      <article>
+        <h2>
+          Why use Git with SVN?
+        </h2>
+        <div class='author'>
+            <p>
+                Get many of the benefits of Git without a major change to how everyone uses version control
+            </p>
+            <ul>
+                <li>Local repository - work without a network connection</li>
+                <li>Track and switch between branches easily</li>
+                <li>Local branches</li>
+                <li>Useful tools - git-log, git-bisect, git-stash, and more</li>
+            </ul>
+        </div>
+      </article>
+
+      <article>
+        <h1>
+            But... our code's in SVN!
+        </h1>
+      </article>
+
+      <article>
+        <h2>
+          Bridging the gap
+        </h2>
+        <p>
+          The 'git svn' command acts as a SVN client. It allows tracking remote SVN branches via local Git branches.
+        </p>
+        <p>
+          It pulls in logs, available branches, and allows using things like svn blame.
+        </p>
+        <p>
+          You can make commits, manage history and review changes locally before pushing them up to SVN while still having version control.
+        </p>
+      </article>
+
+      <article>
+        <h2>
+            Getting started
+        </h2>
+<div class='code build'>
+<pre>
+$ git svn clone svn+ssh://svn.corp.dyndns.com/svn/individual -r 22927:HEAD --stdlayout
+</pre>
+<pre>
+Initialized empty Git repository in /home/dmccombs/git/individual/.git/
+        A       individual/ctuininga/bdr_salesforce_tool/manage.py
+        A       individual/ctuininga/bdr_salesforce_tool/views.py
+        A       individual/ctuininga/bdr_salesforce_tool/__init__.py
+        A       individual/ctuininga/bdr_salesforce_tool/3rd_party/Django-1.3.1.tar.gz
+...
+Checked out HEAD:
+  svn+ssh://svn.corp.dyndns.com/svn/individual/trunk r22962
+</pre>
+</div>
+        <p><strong>Note:</strong> Make sure you specify -r with large repositories to avoid a long clone pulling down all history of the repository.
+      </article>
+
+      <article>
+        <h2>
+            Tracking remote branches
+        </h2>
+        <p>
+            Cloning a repository will leave you with a single Git branch 'master' tracking 'trunk'.
+        </p>
+        <p>
+            You can list available remote svn branches with the command 'git branch -a' and then track them locally.
+        </p>
+<div class='code build'>
+<pre>
+(master)$ git branch -a
+</pre>
+<pre>
+* master
+  remotes/dans-test-branch
+  remotes/trunk
+</pre>
+<pre>
+(master)$ git checkout -b dans-local-test remotes/dans-test-branch
+</pre>
+<pre>
+Switched to a new branch 'dans-local-test'
+</pre>
+<pre>
+(dans-local-test)$ git branch
+* dans-local-test
+  master
+</pre>
+</div>
+        <p>
+            You can then use 'git checkout' to switch between branches
+        </p>
+      </article>
+
+      <article>
+        <h2>
+          Updating from and committing to SVN
+        </h2>
+        <p>
+            git svn rebase
+            <ul>
+                <li>Think of this as 'svn up'</li>
+            </ul>
+        </p>
+        <p>
+            git svn fetch
+            <ul>
+                <li>Like rebase, but also fetches logs and will find new remote branches</li>
+            </ul>
+        </p>
+        <p>
+            git svn dcommit
+            <ul>
+                <li>Pushes local committed changes up to the SVN repository</li>
+            </ul>
+        </p>
+      </article>
+
+      <article>
+        <h2>
+          Workflow (Basic)
+        </h2>
+<div class='code build'>
+<pre>
+(dans-local-test)$ echo 'stuff' > newfile.txt
+</pre>
+<pre>
+(dans-local-test)⚡$ git add newfile.txt
+</pre>
+<pre>
+(dans-local-test)⚡$ git commit -m "Adding a new file."
+</pre>
+<pre>
+[dans-local-test 0b8f8ac] Adding a new file.
+ 1 file changed, 1 insertion(+)
+ create mode 100644 individual/dmccombs/newfile.txt
+</pre>
+<pre>
+(dans-local-test)$ git svn dcommit
+</pre>
+<pre>
+Committing to svn+ssh://svn.corp.dyndns.com/svn/individual/branches/dans-test-branch ...
+    A   individual/dmccombs/newfile.txt
+Committed r22964
+    A   individual/dmccombs/newfile.txt
+r22964 = 2b0a8a0ea3185c398b3d6ba5402f8dc5be400a2c (refs/remotes/dans-test-branch)
+No changes between current HEAD and refs/remotes/dans-test-branch
+Resetting to the latest refs/remotes/dans-test-branch
+(dans-local-test)$
+</pre>
+</div>
+      </article>
+
+      <article>
+        <h2>
+          Workflow (With local branch and history cleaning)
+        </h2>
+<div class='code build'>
+<pre>
+(dans-local-test)$ git checkout -b ectd-4199-update-file-contents
+</pre>
+<pre>
+Switched to branch 'ectd-4199-update-file-contents'
+</pre>
+<pre>
+(ectd-4199-update-file-contents)$ git branch
+</pre>
+<pre>
+  dans-local-test
+* ectd-4199-update-file-contents
+  master
+</pre>
+<pre>
+(ectd-4199-update-file-contents)$ echo 'Now with new content!' >> newfile.txt 
+</pre>
+<pre>
+(ectd-4199-update-file-contents)⚡$ git add newfile.txt
+</pre>
+<pre>
+(ectd-4199-update-file-contents)⚡$ git commit -m "Updating file contents."
+</pre>
+<pre>
+   [ectd-4199-update-file-contents 7b5c4d0] Updating file contents.
+   1 file changed, 1 insertion(+)
+</pre>
+<pre>
+(ectd-4199-update-file-contents)$ echo 'Important line' >> newfile.txt 
+</pre>
+<pre>
+(ectd-4199-update-file-contents)⚡$ git add newfile.txt
+</pre>
+<pre>
+(ectd-4199-update-file-contents)⚡$ git commit -m "Whoops, forgot an important line."
+</pre>
+<pre>
+   [ectd-4199-update-file-contents 6373421] Whoops, forgot an important line.
+   1 file changed, 1 insertion(+)
+</pre>
+<pre>
+(ectd-4199-update-file-contents)$ git rebase -i HEAD~2
+</pre>
+</div>
+      </article>
+
+      <article>
+      <h2>
+      	Cleaning up history
+      </h2>
+<div class='code'>
+<pre class='just-built'>
+pick 7b5c4d0 Updating file contents.
+squash 6373421 Whoops, forgot an important line.
+</pre>
+
+<pre>
+# Rebase d2e09ed..6373421 onto d2e09ed
+# #
+# # Commands:
+# #  p, pick = use commit
+# #  r, reword = use commit, but edit the commit message
+# #  e, edit = use commit, but stop for amending
+# #  s, squash = use commit, but meld into previous commit
+# #  f, fixup = like "squash", but discard this commit's log message
+# #  x, exec = run command (the rest of the line) using shell
+# #
+# # If you remove a line here THAT COMMIT WILL BE LOST.
+# # However, if you remove everything, the rebase will be aborted.
+# #
+#
+</pre>
+</div>
+	</article>
+
+	<article>
+	<h2>
+		Workflow (continued)
+	</h2>
+<div class='code build'>
+<pre>
+(ectd-4199-update-file-contents)$ git checkout dans-local-test
+</pre>
+<pre>
+Switched to branch 'dans-local-test'
+</pre>
+<pre>
+(dans-local-test)$ git merge ectd-4199-update-file-contents
+</pre>
+<pre>
+Updating d2e09ed..e1d6f3b
+Fast-forward
+ individual/dmccombs/newfile.txt |    2 ++
+ 1 file changed, 2 insertions(+)
+</pre>
+<pre>
+(dans-local-test)$ cat newfile.txt
+</pre>
+<pre>
+stuff
+Now with new content!
+Important line
+</pre>
+<pre>
+(dans-local-test)$ git svn dcommit
+</pre>
+<pre>
+Committing to svn+ssh://svn.corp.dyndns.com/svn/individual/branches/dans-test-branch ...
+...
+r22967 = 24ade24cb18baa7694e7c1589b23aee71cb61cf1 (refs/remotes/dans-test-branch)
+No changes between current HEAD and refs/remotes/dans-test-branch
+Resetting to the latest refs/remotes/dans-test-branch
+(dans-local-test)$
+</pre>
+</div>
+	</article>
+
+	<article>
+	<h1>
+		Tools, Tips and Tricks
+	</h1>
+	</article>
+
+	<article>
+	<h2>
+		git add -p
+	</h2>
+	<p>
+		Git stores changes to be committed in an index, so everything in your working directory does not need to be committed, even portions of files can be committed while other changes in the same file are not.
+	</p>
+<div class='code build'>
+<pre>
+(dans-local-test)⚡$ git add -p
+</pre>
+<pre>
+diff --git a/individual/dmccombs/newfile.txt b/individual/dmccombs/newfile.txt
+index e51bbc8..d82653b 100644
+--- a/individual/dmccombs/newfile.txt
++++ b/individual/dmccombs/newfile.txt
+@@ -1,3 +1,5 @@
+ stuff
++more stuff!
+ Now with new content!
+ Important line
++Other stuff
+Stage this hunk [y,n,q,a,d,/,s,e,?]?
+</pre>
+</div>
+	</article>
+
+	<article>
+		<h2>
+			git diff
+		</h2>
+		<p>
+			By default, git diff pages and colorizes output. When run without arguments it shows the differences between the working directory and committed state.
+		</p>
+		<p>
+			By adding --cached, git diff will show the differences between the index (staged changes to be committed) and the committed state.
+		</p>
+	</article>
+
+	<article>
+		<h2>
+			git status
+		</h2>
+		<p>
+			Much like svn status, this will show what files have changed in the working directory compared to the repository. It will also show changes that are in the index ready to commit, and provides helpful information on staging changes or reverting changes.
+		</p>
+	</article>
+
+	<article>
+		<h2>
+			git bisect
+		</h2>
+		<p>
+			Bisect is a tool for tracking down the exact commit a change was introduced. This is extremely helpful in tracking down regressions and subtle bugs that are only noticed some time after they were introduced.
+		</p>
+		<p>
+			Running git bisect will allow you to specify 'good' and 'bad' revisions, and will switch to random revisions to allow you to test, and mark them good or bad, until it's able to determine the source of the 'bad' change.
+		</p>
+	</article>
+
+	<article>
+		<h2>
+			git stash
+		</h2>
+		<p>
+			Stashing allows you to store uncommitted changes and revert to a clean working directory. This is useful if you want to do a git svn rebase, and have changes that aren't ready to commit that you don't want to lose. 'git stash pop' will apply the changes back to your working directory afterwards.
+		</p>
+	</article>
+
+	<article>
+		<h2>
+			Bash prompt integration
+		</h2>
+<pre>
+function parse_git_branch {
+        git rev-parse --git-dir &> /dev/null
+        git_status="$(git status 2> /dev/null)"
+        branch_pattern="^# On branch ([^${IFS}]*)"
+        remote_pattern="# Your branch is (.*) of"
+        diverge_pattern="# Your branch and (.*) have diverged"
+        if [[ ! ${git_status} =~ "working directory clean" ]]; then
+                state="⚡"
+        fi
+        # add an else if or two here if you want to get more specific
+        if [[ ${git_status} =~ ${remote_pattern} ]]; then
+                if [[ ${BASH_REMATCH[1]} == "ahead" ]]; then
+                        remote="↑"
+                else
+                        remote="↓"
+                fi
+        fi
+        if [[ ${git_status} =~ ${diverge_pattern} ]]; then
+                remote="↕"
+        fi
+        if [[ ${git_status} =~ ${branch_pattern} ]]; then
+                branch=${BASH_REMATCH[1]}
+                echo " (${branch})${remote}${state}"
+        fi
+}
+
+if [ "$color_prompt" = yes ]; then
+    PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[01;32m\]$(parse_git_branch)\[\033[00m\]\$ '
+else
+    PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w$(parse_git_branch)\$ '
+fi
+</pre>
+	</article>
+
+	<article>
+	<h2>
+		Limitations of using git svn
+	</h2>
+	<ul>
+		<li>Limited support for svn properties</li>
+		<li>Can't take advantage of Git's merging abilities</li>
+	</ul>
+	</article>
+
+	<article>
+	<h1>
+		Questions?
+	</h1>
+	<br>
+	<p class='small'>References:
+	<ul class='small'>
+		<li><a href='http://git.or.cz/course/svn.html'>Git - SVN Crash Course</a> (http://git.or.cz/course/svn.html)</li>
+		<li><a href='http://reinh.com/blog/2009/03/02/a-git-workflow-for-agile-teams.html'>A Git Workflow for Agile Teams</a> (http://reinh.com/blog/2009/03/02/a-git-workflow-for-agile-teams.html)</li>
+	</ul>
+	</p>
+	</article>
+  </body>
+</html>

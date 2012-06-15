@@ -217,12 +217,16 @@ function updateSlides() {
 
 function buildNextItem() {
   var toBuild  = slideEls[curSlide].querySelectorAll('.to-build');
-
   if (!toBuild.length) {
     return false;
   }
-
-  toBuild[0].classList.remove('to-build', '');
+  
+  var justBuilt = slideEls[curSlide].querySelectorAll('.just-built');
+  toBuild[0].classList.remove('to-build');
+  toBuild[0].classList.add('just-built');
+  if (justBuilt.length) {
+    justBuilt[0].classList.remove('just-built');
+  }
 
   if (isChromeVoxActive()) {
     speakAndSyncToNode(toBuild[0]);
