@@ -96,7 +96,8 @@ article small{
   bottom:0;
   left:0;
   right:0;
-  background-size:100% 100%;
+  //background-size:100% 100%;
+  overflow:hidden;
   background-repeat: no-repeat;
   opacity:0.25;
 } 
@@ -105,12 +106,13 @@ article small{
   content:"";
   position:absolute;
   z-index:-1;
-  top:0;
+  height:110px;
   bottom:0;
   left:0;
   right:0;
+  background:black;
   background-image: url(../images/Dyn.svg);
-  background-position: 800px 610px;
+  background-position: 800px 20px;
   background-repeat: no-repeat;
 }
 
@@ -234,7 +236,7 @@ margin-top: 200px
 }
 
 .subtitle {
-margin-top: 200px
+margin-top: 230px
 }
 
 /* Builds */
@@ -249,3 +251,4 @@ margin-top: 200px
 .to-build {
   opacity: 0;
 }
+
