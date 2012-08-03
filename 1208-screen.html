@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Dyn Lunch and Learn: Intro to Using Screen</title>
+    <meta charset='utf-8'>
+    <meta name='apple-mobile-web-app-capable' content='yes'>
+    
+    <link rel="stylesheet" href="h5s/page.css" type="text/css" media='all' />
+    
+    <link rel="stylesheet" href="h5s/screen.css" type="text/css" media='screen' title="All at once" />
+    <link rel="alternate stylesheet" href="h5s/slides.css" type="text/css" media='screen' title="Slideshow" />
+    <link rel="alternate stylesheet" href="h5s/print.css" type="text/css" media='screen' title="Print Preview" />
+    
+    <link rel="stylesheet" href="h5s/print.css" type="text/css" media="print" />
+    <style>
+    pre,div.code{background:black;color:#3f3;line-height:105%}
+    pre.just-built,.just-built pre {color:yellow}
+
+    </style>
+    <script type='text/javascript'>
+      var SLIDESHOW_MODE = 1; // change it to 1 to start in slideshow mode
+    </script>
+    <script src='h5s/slides.min.js' type='text/javascript'></script>
+  </head>
+  
+  <body>
+    <section class='slides layout-widescreen template-default'>
+      <article>
+        <h1 style='font-size:300px;opacity:.1;font-weight:bold'>
+          screen
+        </h1>
+        <h2>
+          Introduction to Using 'Screen'
+        </h2>
+        <p style='margin-top:2em'>
+          or How I Learned to Stop Worrying and Love the Terminal
+        </p>
+        <div class='author' style='font-size:smaller'>
+          <a href='https://twitter.com/egon1024'>@egon1024</a>
+        </div>
+      </article>
+
+      <article>
+        <h2>What is screen?</h2>
+        <ul class='build'>
+        <li>A way to have multiple windows in a single terminal session</li>
+        <li>A way to be able to leave programs running in a terminal when you disconnect</li>
+        <li>Your savior, if you need to be logged in via a terminal</li>
+        </ul>
+        </div>
+      </article>
+
+      <article>
+        <h2>
+          Where do I get it?
+        </h2>
+		<ul>
+			<li>Apt based linux systems:<pre>
+$ sudo apt-get install screen</pre></li>
+			<li>FreeBSD:<pre>
+$ cd /usr/ports/sysutils/screen
+$ sudo make clean all install clean</pre></ul>
+		</ul>
+      </article>
+
+      <article>
+        <h2>
+          Starting it up
+        </h2>
+        <div class='build'>
+			<div>As simple as...<pre>
+$ screen</pre></div>
+			<p>Once you bypass the spash screen, you're in it</p>
+			<div>... though it's hard to tell</div>
+			<p>One hint that you're in screen:<pre>
+$ echo $TERM</pre></p>
+			<div>Exit the shell and you'll exit screen<pre>
+[screen is terminating]</pre></div>
+
+        </div>
+      </article>
+
+      <article>
+        <h2>
+		  Hot key
+        </h2>
+        <ul>
+		    <li><code>Ctrl-A</code> is the trigger for screen commands</li>
+			<li>This can be changed ... but don't do it</li>
+			<li><code>Ctrl-A ?</code> for help</li>
+			<li><code>Ctrl-A a</code> to send a regular Ctrl-A to the terminal</li>
+        </ul>
+      </article>
+
+      <article>
+        <h2>
+		  Multiple "screens"
+        </h2>
+        <ul>
+			<li>Create a new one with <code>Ctrl-A C</code></li>
+			<li>Switch to "last" one with <code>Ctrl-A Ctrl-A</code></li>
+			<li>Jump to a screen number with <code>Ctrl-A <0-9></code></li>
+			<li><code>Ctrl-A n</code> for next, <code>Ctrl-A p</code> for previous</li>
+			<li><code>Ctrl-A A</code> to name a window</li>
+			<li><code>Ctrl-A &quot;</code> to get a list of windows</li>
+			<li><code>Ctrl-A N</code> to see which window is currently displayed</li>
+        </ul>
+      </article>
+
+      <article>
+        <h2>
+		  Disconnecting and reconnecting
+        </h2>
+		<ul>
+			<li>Detaching from screen while leaving it running: <code>Ctrl-A Ctrl-d</code></li>
+			<li>If there is only one screen session running, just reattach with: <pre>
+$ screen -x</pre></li>
+			<li>Get a list of running screen sessions with:<pre>
+$ screen -ls</pre></li>
+			<li>Connect to a specific screen session with:<pre>
+$ screen -x &lt;name&gt;</pre></li>
+		</ul>
+      </article>
+
+      <article>
+        <h2>
+		  Naming your screen session
+        </h2>
+		<ul>
+			<li>Start up screen with:<pre>
+$ screen -S &lt;name&gt;</pre></li>
+			<li>Or, once in screen, do: <code>Ctrl-A :sessionname &lt;name&gt;</code></li>
+			<li>After detaching, reattach with:<pre>
+$ screen -x &lt;name&gt;</pre></li>
+		</ul>
+      </article>
+
+      <article>
+        <h2>
+			.screenrc
+        </h2>
+			<p>Like many utilities, you can configure screen with a conf file.  To get a list of options:</p>
+<pre>$ man screen</pre>
+			<p>Changes to .screenrc will only be applied to a new screen session</p>
+      </article>
+
+      <article>
+        <h2>
+			My .screenrc
+        </h2>
+		<ul class="build">
+			<li>Set up some useful items in the footer of the session:<pre>
+caption always "%{Wb} %H %{Bk}| %{Ck}%-w%50&gt;%{Cb} %n %t %{-}%+w%&lt;%{- Wk}%{Bk} | %=%{Wb} %C "</pre></li>
+			<li>Set the scrollback buffer<pre>
+scrollback 1500</pre></li>
+			<li>No license message on startup<pre>
+startup_message off</pre></li>
+			<li>Stop an annoying issue on FreeBSD, but the path differs by platform/distribution<pre>
+shell -/usr/local/bin/bash</pre></li>
+		</ul>
+      </article>
+
+      <article>
+        <h2>
+			Miscellaneous Commands
+        </h2>
+		<ul>
+			<li>Lock the screen session: <code>Ctrl-A x</code></li>
+			<li>Show who is attached to session: <code>Ctrl-A *</code></li>
+			<li>Refresh the screen: <code>Ctrl-A l</code> <i>(lowercase ell)</i></li>
+			<li>Violently kill current window: <code>Ctrl-A k</code></li>
+		</ul>
+      </article>
+
+  </body>
+</html>
