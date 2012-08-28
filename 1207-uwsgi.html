@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Dyn Lunch and Learn: uWSGI</title>
+    <meta charset='utf-8'>
+    <meta name='apple-mobile-web-app-capable' content='yes'>
+    
+    <link rel="stylesheet" href="h5s/page.css" type="text/css" media='all' />
+    
+    <link rel="stylesheet" href="h5s/screen.css" type="text/css" media='screen' title="All at once" />
+    <link rel="alternate stylesheet" href="h5s/slides.css" type="text/css" media='screen' title="Slideshow" />
+    <link rel="alternate stylesheet" href="h5s/print.css" type="text/css" media='screen' title="Print Preview" />
+    
+    <link rel="stylesheet" href="h5s/print.css" type="text/css" media="print" />
+    <style>
+    pre,div.code{background:black;color:#3f3;line-height:105%}
+    pre.just-built,.just-built pre {color:yellow}
+
+    </style>
+    <script type='text/javascript'>
+      var SLIDESHOW_MODE = 1; // change it to 1 to start in slideshow mode
+    </script>
+    <script src='h5s/slides.min.js' type='text/javascript'></script>
+  </head>
+  
+<body>
+<section class='slides layout-widescreen template-default'>
+
+
+
+<!-- *************************** --> <article>
+<h1 style='font-size:1030%;position:absolute;margin-top:20px;opacity:.05'>UWSGI</h1>
+<h2>uWSGI</h2>
+<h3>New Ingredient For Your Web-Application Soup</h3>
+<div class='author' style='font-size:smaller'>
+    Dyn Inc, July &ndash; August 2012<br/>
+    <a href='https://twitter.com/alexsergeyev'>@alexsergeyev</a>
+</div>
+
+
+<!-- *************************** --> </article><article>
+<h2>Goals</h2>
+<ul>
+<li>learn about wsgi specification</li>
+<li>learn about uwsgi project</li>
+<li>know why those are important for web application developers</li>
+</ul>
+
+<h2>The usual</h2>
+<ul>
+<li><a href='https://github.com/dyninc/lunch-and-learn'>github.com/dyninc/lunch-and-learn</a></li>
+<li>modifications welcome!</li>
+</ul>
+
+<!-- *************************** --> </article><article>
+<h2>WSGI</h2>
+
+<div class='build'>
+<div>
+<q>
+ Web Server Gateway Interface. It is a specification for web servers and application servers to communicate with web applications (though it can also be used for more than that).
+</q><div class='author'>WSGI.org</div>
+</div>
+<ul>
+<li>programming interface specification</li>
+<li>defines single way of interaction between application components</li>
+<li>widely adopted</li>
+</ul>
+</div>
+
+<!-- *************************** --> </article><article>
+<h2>WSGI Application Interface</h2>
+
+
+<pre>
+def application(environ, start_response):
+	response_body = 'The request method was {m}'.format(m=environ['REQUEST_METHOD'])
+	status = '200 OK'
+	response_headers = [('Content-Type', 'text/plain'), ('Content-Length', str(len(response_body)))]
+	start_response(status, response_headers)
+	return [response_body]
+</pre>
+
+<div class='build'>
+<div>
+<h2>PSGI: Similar Specification in Perl</h2>
+<pre>
+use v5.12;
+my $app = sub {
+    my $env = shift;
+    my $body = 'The request method was ' . $env->{REQUEST_METHOD};
+    return [ '200 OK',
+        [ 'Content-Type' => 'text/plain', 'Content-Length' => length($body) ],
+        [ $body ]
+    ]
+}
+</pre>
+</div></div>
+
+<div class='build'>
+<ul>
+	<li>No special libraries required to test this code</li>
+	<li>Quite easy to read and write it knowing basics of HTTP and CGI</li>
+</ul>
+</div>
+
+<!-- *************************** --> </article><article>
+<h2>WSGI Server Interface</h2>
+
+<ul>
+    <li>part of WSGI/PSGI specifications</li>
+    <li>translates HTTP requests to WSGI calls</li>
+    <li>translates WSGI results to HTTP responses</li>
+    <li>apps do not depend on using particular server software</li>
+</ul>
+
+<p style='margin-top:100px'>Many implementations are out there:</p>
+<p>wsgiref.simple_server, mod_wsgi, mod_psgi, tornado, twisted...<br/>
+plack, starman, starlet, twiggy...</p>
+
+
+<!-- *************************** --> </article><article>
+<h2>uWSGI as WSGI server</h2>
+
+<div style='margin-top:5em'>
+To run WSGI app:
+<pre>
+uwsgi --http :8080 --wsgi-file hello.py
+# or
+uwsgi --plugins http,python --http :8080 --http-modifier1 0 --wsgi hello
+</pre>
+</div>
+
+<div class='build'>
+<div>PSGI:
+<pre>
+uwsgi --plugins http,psgi --http :8080 --http-modifier1 5 --psgi hello.pl
+</pre>
+</div>
+<div>
+....others
+<pre>
+uwsgi --plugins http,rack --http :8080 --http-modifier1 7 --rack hello.rb
+uwsgi --plugins http,lua --http :8080 --http-modifier1 6 --lua hello.lua
+</pre>
+</div>
+</div>
+
+<!-- *************************** --> </article><article>
+<h2>Middleware</h2>
+
+<q>Components that play both sides</q>
+<ul>
+    <li>consume and process wsgi application result as wsgi server</li>
+    <li>return new result to be processed by server or another middleware</li>
+</ul>
+
+<div class='build'>
+<div style='margin-top:1em'>
+<p>Common uses:</p>
+<ul class='build'>
+    <li>logging</li>
+    <li>transformations (xslt, filters, etc...)</li>
+    <li>access control (authorization, rate limiting,...)</li>
+    <li>uri mapping and load-balancing (e.g. conditional use of experimental code)</li>
+    <li>debugging</li>
+</ul>
+</div>
+</div>
+
+<!-- *************************** --> </article><article>
+<h2>Frameworks</h2>
+
+<p>Frameworks wrap server, middleware and add-ons into usable system</p>
+
+<ul>
+    <li>minimize time required to build final product</li>
+    <li>abstract complexities from the developer</li>
+    <li>sometimes simplify requirements of WSGI</li>
+    <li>normally require time to learn concepts of whole system</li>
+</ul>
+
+<!-- *************************** --> </article><article>
+<h2>Frameworks: Python</h2>
+
+<div style='height:460px;margin-top:50px'>
+<ul>
+<li><a href='https://www.djangoproject.com/'>Django</a></li>
+<li><a href='http://flask.pocoo.org/'>Flask</a></li>
+<li><a href='http://pyramid.rtfd.org/'>Pyramid</a></li>
+<li><a href='http://bottlepy.org/'>Bottle</a></li>
+</ul>
+</div>
+
+<div style='font-size:20px;padding-right:300px;position:relative;line-height:25px'>
+<div style='float:left;height:100px;margin-right:20px'>See also:</div>
+
+<div><a href="http://www.slideshare.net/r1chardj0n3s/web-microframework-battle">
+10 micro frameworks compared</a> (bad ranking approach but useful info)</div>
+
+<div style='margin-top:15px'>OSCON 2012 talk &#147;<a href='http://www.oscon.com/oscon2012/public/schedule/detail/24399'>Accelerate your business with blazing prototypes</a>&#148;, here is one <a href='images/flask-vs-others.png'>slide</a> 
+for a reference.</div>
+</div>
+
+<!-- *************************** --> </article><article>
+<h2>Frameworks: Perl</h2>
+<ul>
+<li><a href="http://www.catalyst.org/">Catalyst</a></li>
+<li><a href="http://perldancer.org/">Dancer</a></li>
+<li><a href="http://mojolicio.us/">Mojolicious</a></li>
+<li><a href="http://jifty.org/">Jifty</a></li>
+<li><a href="http://cgi-app.org/">CGI::Application</a></li>
+</ul>
+
+<!-- *************************** --> </article><article>
+<h2>I like Flask</h2>
+<div style='background:white;float:right'><img src='1207-uwsgi/flask-small.png' /></div>
+
+
+
+<p style='font-size:70%'>
+    I do not have reasons to say it's better than Django
+    or others, it's just simple and reliable.
+</p>
+<ul>
+  <li>defines set of useful decorators to make apps look neat</li>
+<pre>
+from flask import Flask
+app = Flask(__name__)
+
+@app.route("/")
+def hello():
+    return "Hello World!"
+
+if __name__ == "__main__":
+    app.run()
+</pre>
+  <li>based on Werkzeug (another framework) and Jinja 2 (templating engine)</li>
+<pre>
+asergeyev@:uwsgi-test$ python flask-test.py 
+ * Running on http://127.0.0.1:5000/
+127.0.0.1 - - [09/Aug/2012 23:18:23] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [09/Aug/2012 23:18:24] "GET /favicon.ico HTTP/1.1" 404 -
+^C
+</pre>
+</ul>
+
+<!-- *************************** --> </article><article>
+<h2>Stop, isn't this talk about uWSGI?</h2>
+<ul class='build'>
+    <li>right, but it's around same spec</li>
+    <li>let's show how to use flask-test.py with uwsgi</li>
+    <li>and use uwsgi INI file to save command line space</li>
+    <li>similar approach will work for other frameworks</li>
+</ul>
+<div class='build'>
+<pre>
+# flask.ini - settings for typical flask app
+[uwsgi]
+plugin=python,http
+http=:8080
+callable=app
+</pre>
+<pre>
+uwsgi --ini test.ini --wsgi flask-test
+</pre>
+<p>
+That gives us faster application and ability to use uwsgi protocol to even
+better frontend servers.
+</p>
+<p style='font-size:150%;margin-top:50px'>
+*&+_^<b>%-(</b>#=(@*&# uwsgi protocol?!
+</p>
+</div>
+
+<!-- *************************** --> </article><article>
+<h2>Yes, &#147;uwsgi&#148; Protocol</h2>
+
+<ul style='margin-top:2em'>
+<li>binary protocol to transmit any type of data</li>
+<li>TCP, UDP/Multicast, STCP (future) transport</li>
+<li>supported in uWSGI, Apache and Nginx (mod_uwsgi) and other apps</li>
+<li>idea is to send requests and responses in something better than HTTP (modern multi-component webapps interact a lot)</li>
+</ul>
+
+<!-- *************************** --> </article><article>
+<h2>uWSGI Added Value</h2>
+
+<ul class='build'>
+<li>FastRouter - async proxy/load-balancer/router talking uwsgi (many features)</li>
+<li>uWSGI Emperor - spawns vassals for multiple apps on demand (+awesome plugins for it)</li>
+<li>flexible logging options (UDP, Socket, ZeroMQ, Graphite and RRD plugins)</li>
+<li>CGI "upscaling"</li>
+<li>"harakiri" mode</li>
+<li>hot (re-)loading, dynamic apps support, configuration updates</li>
+<li>Spooler to manage long-running tasks; "Mule" worker proceses; Clustering</li>
+<li>shared memory, shared distributed cache, API to talk to it</li>
+</ul>
+<div class='build' style='padding-top:50px'>
+<div>... just check <a href='http://projects.unbit.it/uwsgi/#CurrentCoreFeatures'>never ending list at uwsgi website</a> yourself</div>
+</div>
+
+<!-- *************************** --> </article><article>
+<h2>Why is all this?</h2>
+
+<p>uWSGI allows you:</p>
+<ul>
+<li>split your tasks between more components</li>
+<li>control load on each application instance</li>
+<li>scale your system as needs to change</li>
+<li>control how your systems fail</li>
+<li>spool additional tasks without additional task manager</li>
+</ul>
+
+
+
+<!-- *************************** --> </article><article>
+<h2>Few Clarifications</h2>
+
+<p>uWSGI is not a framework. Its tools are so convinient that it's easy to write uWSGI dependent code, which is not always ideal.</p>
+<ul class='build'>
+<li>tools are always evolving, even uWSGI ones</li>
+<li>it's easier to test code that does not depend on external libs</li>
+<li>consider creating a middleware that needs uWSGI and could be replaced</li>
+</ul>
+<div class='build'>
+<div>
+<q>uWSGI is a fast, self-healing and<br/>developer/sysadmin-friendly application container server coded in pure&nbsp;C.</q>
+<div class='author'>uWSGI website (Roberto De Ioris)</div>
+</div>
+</div>
+
+<!-- *************************** --> </article><article>
+<h2>Recap</h2>
+
+<ul>
+<li>Split your web-apps to components whenever possible</li>
+<li>Follow WSGI, it assures that your components use compatible interfaces</li>
+<li>Consider using uWSGI, fast app container with many added features</li>
+<li>Use uwsgi protocol for server to server (e.g. frontend to backend) communication</li>
+<li>Think about your critical path in your applications</li>
+</ul>
+
+
+<!-- *************************** --> </article><article>
+<h2>Velocity 2012: Resilient UX Example</h2>
+<div style='margin-top:1em'><img src="1207-uwsgi/v2.jpg"></div>
+
+<!-- *************************** --> </article><article>
+<h2>Velocity 2012: Resilient UX Example</h2>
+<div style='margin-top:1em'><img src="1207-uwsgi/v3.jpg"></div>
+
+<!-- *************************** --> </article><article>
+<h2>Velocity 2012: Resilient UX Example</h2>
+<div style='margin-top:1em'><img src="1207-uwsgi/v1.jpg"></div>
+
+
+
+<!-- *************************** --> </article><article>
+<h2>Using Server Side Includes</h2>
+
+<pre>
+<html>
+&lt;!--#set var="title" value="About us" -->
+&lt;!--#include virtual="header.html" -->
+&lt;h1>&lt;!--#echo var="title" -->&lt;/h1>
+
+&lt;!--#include virtual="advertising.html?theme=corporate" -->
+&lt;p>Under construction!&lt;/p>
+
+&lt;!--#include virtual="footer.html" -->
+</html>
+</pre>
+
+<ul>
+    <li>Varnish, re-invented the wheel but introduced "edge SSI"</li>
+    <li>Apache, nginx were doing this since they were created</li>
+    <li>nginx and Varnish can execute sub-requests concurrently</li>
+    <li>you can individually cache responses</li>
+    <li>you can define way of handling sub-request failures</li>
+</ul>
+
+
+<!-- *************************** --> </article><article>
+<h2>Questions?</h2>
+
+
+<p style='margin-top:5em'>More:</p>
+<ul>
+<li><a href='http://wsgi.readthedocs.org/en/latest/learn.html'>Learn about WSGI</a></li>
+<li><a href="http://www.python.org/dev/peps/pep-0333/">PEP 333, WSGI Specification</a></li>
+<li><a href="http://plackperl.org/">PSGI/Plack - Perl Superglue between frameworks and web servers</a></li>
+<li><a href="http://search.cpan.org/~miyagawa/PSGI/PSGI.pod">PSGI Specification</a></li>
+<li><a href="http://projects.unbit.it/uwsgi/">uWSGI website</a></li>
+</ul>
+</article>
+</section>
+</body>
+</html>
+

@@ -231,7 +231,7 @@ ul > li:before {
 }
 
 pre {
-  font-family: 'Courier New', monospace;
+  font-family: Inconsolata,"Courier New",Courier,"monospace";
 
   max-height: 415px;
   font-size: 18px;
@@ -413,6 +413,15 @@ div.author {
   font-weight: none;
   margin-top: 80px;
   margin-right: 150px;
+}
+q ~ div.author {
+  margin-top:-1.2em;
+  text-align:right;
+  color:#fe6;
+  font-size:95%;
+}
+q ~ div.author:before {
+    content: "-- "
 }
 
 /* Size variants */
